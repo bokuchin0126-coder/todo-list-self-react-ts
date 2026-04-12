@@ -7,6 +7,7 @@ import './App.css'
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [text, setText] = useState<string>("")
+  const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<filter>("all")
 
   const addTodo = () => {
@@ -22,7 +23,11 @@ function App() {
     setText("")
   }
 
-  const filtered = filter === "all" ? todos : todos.filter(todo => todo.completed === filter)
+  const filtered = todos.filter((todo) => {
+    const matchFilter = filter === "all" ? todos : todos.filter(todo => todo.completed === filter)
+    const matchText = todo.text.toLowerCase().includes(searchText.toLowerCase())
+    return matchFilter && matchText
+  }) 
 
   const handleToggle = (id: number) => {
     setTodos(todos.map(todo => 
@@ -44,7 +49,7 @@ function App() {
   return (
     <>
       <div className="main">
-        <input 
+        <input className="add-todo"
           key="todo-input"
           type="text"
           value={text}
@@ -57,6 +62,20 @@ function App() {
           placeholder="入力する..."
         />
         <button onClick={addTodo}>追加</button>
+
+        <input className="search-todo"
+          key="search-input"
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="検索する..."
+        />
+        <p>{filtered.length} / {todos.length}</p>
+        <div className="filters">
+          <button onClick={() => setFilter("all")} className={filter === "all" ? "active" : ""}>全て</button>
+          <button onClick={() => setFilter("active")} className={filter === "active" ? "active" : ""}>未完了</button>
+          <button onClick={() => setFilter("completed")} className={filter === "completed" ? "active" : ""}>完了</button>
+        </div>
       </div>
 
       <div className="list">
