@@ -1,10 +1,8 @@
-type status = "active" | "completed" 
-
 export type Todo = {
     id: number
     text: string
-    completed: status
+    status: "completed" | "active"
     isEditing: boolean
 }
 
-export type filter = "all" | status 
+export type filter = "all" | "completed" | "active"
