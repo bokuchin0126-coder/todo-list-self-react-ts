@@ -10,6 +10,7 @@ function App() {
   const [filter, setFilter] = useState<filter>("all")
 
   const handleAddTodos = () => {
+    if (inputText.trim() === "") return 
     setTodos((prev) => [...todos, {id: Date.now(), text: inputText, status: "active", isEditing: false}])
     setInputText("")
   }
