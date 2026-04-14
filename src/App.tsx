@@ -10,21 +10,33 @@ function App() {
   const [filter, setFilter] = useState<filter>("all")
 
   const handleAddTodos = () => {
-    const newTodo: Todo = {id: Date.now(), text: inputText, completed: "active", isEditing: false}
-    setTodos([...todos, newTodo])
+    setTodos((prev) => [...todos, {id: Date.now(), text: inputText, status: "active", isEditing: false}])
+    setInputText("")
   }
   
+  const handleToggle = (id: number) => {
+    setTodos((prev) => prev.map(todo => (
+      todo.id === id ? {...todo, status: todo.status === "active" ? "completed" : "active"} : todo
+    )))
+  }
 
   return (
     <>
       <input
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleAddTodos()
+          }
+        }}
       />
       
       <button onClick={handleAddTodos}>追加</button>
       {todos.map((todo) => {
-        return <div key={todo.id}>{todo.text}</div>
+        return <div key={todo.id}>{todo.text}
+          <button onClick={() => handleToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
+        </div>
       })}
     </>
   )
