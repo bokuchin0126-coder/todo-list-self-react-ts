@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Todo } from './types'
 import type { filter } from './types'
+import  TodoItem  from './Todoitem'
 import './App.css'
 
 function App() {
@@ -34,11 +35,14 @@ function App() {
       />
       
       <button onClick={handleAddTodos}>追加</button>
-      {todos.map((todo) => {
-        return <div key={todo.id}>{todo.text}
-          <button onClick={() => handleToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
-        </div>
-      })}
+
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          onToggle={handleToggle}
+          />
+      ))}
     </>
   )
 }
