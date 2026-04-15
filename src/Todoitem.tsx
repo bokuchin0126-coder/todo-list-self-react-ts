@@ -1,16 +1,35 @@
 import type { Todo } from './types'
+import { useState } from 'react'
 
 type Props = {
     todo: Todo
     onToggle: (id: number) => void
+    onEdit: (id: number, text: string) => void
+    onToggleEdit: (id: number) => void
 }
 
-function TodoItem({ todo, onToggle }: Props) {
+function TodoItem({ todo, onToggle, onEdit, onToggleEdit }: Props) {
+
+  const [editText, setEditText] = useState<string>(todo.text)
+
     return (
-      <div key={todo.id}>
+      <>
+      <div>
         <button onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
-        {todo.text}
+        {todo.isEditing ? (
+          <input 
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onEdit(todo.id, editText)
+              }
+            }} />
+          ) : todo.text}
+
+          <button onClick={() => onEdit(todo.id, editText)}>{todo.isEditing ? "保存" : "編集"}</button>
       </div>
+      </>
     )
 }
 

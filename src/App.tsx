@@ -22,6 +22,13 @@ function App() {
     )))
   }
 
+  const handleEditTodos = (id: number, text: string) => {
+    if (text.trim() === "") return
+    setTodos((prev) => prev.map(todo => (
+      todo.id === id ? {...todo, text: text, isEditing: !todo.isEditing} : todo
+    )))
+  }
+
   return (
     <>
       <input
@@ -41,6 +48,7 @@ function App() {
           key={todo.id}
           todo={todo}
           onToggle={handleToggle}
+          onEdit={handleEditTodos}
           />
       ))}
     </>
