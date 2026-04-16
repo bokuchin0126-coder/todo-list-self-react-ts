@@ -5,10 +5,9 @@ type Props = {
     todo: Todo
     onToggle: (id: number) => void
     onEdit: (id: number, text: string) => void
-    onToggleEdit: (id: number) => void
 }
 
-function TodoItem({ todo, onToggle, onEdit, onToggleEdit }: Props) {
+function TodoItem({ todo, onToggle, onEdit }: Props) {
 
   const [editText, setEditText] = useState<string>(todo.text)
 

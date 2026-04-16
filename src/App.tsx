@@ -11,8 +11,8 @@ function App() {
   const [filter, setFilter] = useState<filter>("all")
 
   const handleAddTodos = () => {
-    if (inputText.trim() === "") return 
-    setTodos((prev) => [...todos, {id: Date.now(), text: inputText, status: "active", isEditing: false}])
+    if (inputText.trim() === "") return
+    setTodos((prev) => [...prev, {id: Date.now(), text: inputText, status: "active", isEditing: false}])
     setInputText("")
   }
   
@@ -23,10 +23,17 @@ function App() {
   }
 
   const handleEditTodos = (id: number, text: string) => {
-    if (text.trim() === "") return
+    if (text.trim() === "" ) return 
     setTodos((prev) => prev.map(todo => (
       todo.id === id ? {...todo, text: text, isEditing: !todo.isEditing} : todo
     )))
+  }
+
+  const filteredTodo = () => {
+    if (filter === "all") return todos
+    if (filter === "active")  return todos.filter((todo) => todo.status === "active")
+    else if (filter === "completed") return todos.filter((todo) => todo.status === "completed")
+    return todos
   }
 
   return (
@@ -43,7 +50,13 @@ function App() {
       
       <button onClick={handleAddTodos}>追加</button>
 
-      {todos.map((todo) => (
+      <div>
+        <button onClick={() => setFilter("all")}>全て</button>
+        <button onClick={() => setFilter("completed")}>達成</button>
+        <button onClick={() => setFilter("active")}>未達成</button>
+      </div>
+
+      {filteredTodo().map((todo) => (
         <TodoItem
           key={todo.id}
           todo={todo}
