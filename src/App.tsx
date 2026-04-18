@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEffect } from 'react'
 import type { Todo } from './types'
 import type { filter } from './types'
 import  TodoItem  from './Todoitem'
@@ -9,6 +10,8 @@ function App() {
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<filter>("all")
+  const [editingId, setEditingId] = useState<number | null>(null)
+  
 
   const handleAddTodos = () => {
     if (inputText.trim() === "") return
@@ -25,9 +28,10 @@ function App() {
   const handleEditTodos = (id: number, text: string) => {
     if (text.trim() === "" ) return 
     setTodos((prev) => prev.map(todo => (
-      todo.id === id ? {...todo, text: text, isEditing: !todo.isEditing} : todo
+      todo.id === id ? {...todo, text: text, isEditing: false} : todo
     )))
   }
+
 
   const filteredTodo = () => {
     if (filter === "all") return todos
@@ -35,6 +39,18 @@ function App() {
     else if (filter === "completed") return todos.filter((todo) => todo.status === "completed")
     return todos
   }
+
+  useEffect(() => {
+    const handleClick = () => {
+      setEditingId(null)
+    }
+
+    document.addEventListener("click", handleClick)
+
+    return () => {
+      document.removeEventListener("click", handleClick)
+    }
+  }, [])
 
   return (
     <>
@@ -60,6 +76,8 @@ function App() {
         <TodoItem
           key={todo.id}
           todo={todo}
+          editingId={editingId}
+          setEditingId={setEditingId}
           onToggle={handleToggle}
           onEdit={handleEditTodos}
           />
