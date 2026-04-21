@@ -5,4 +5,6 @@ export type Todo = {
     isEditing: boolean
 }
 
-export type filter = "all" | "completed" | "active"
+export type View = "list" | "detail"
+
+export type Filter = "all" | "completed" | "active"
