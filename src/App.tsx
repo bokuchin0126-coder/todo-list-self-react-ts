@@ -1,22 +1,41 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
-import type { Todo, Filter, View } from './types'
+import type { Todo, Filter, View, Category } from './types'
 import TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
 import './App.css'
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const saved = localStorage.getItem("todos")
+    return saved ? JSON.parse(saved) : []
+  })
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<Filter>("all")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [view, setView] = useState<View>("detail")
+  const [selectCategoryId, setSelectCategoryId] = useState<number>(1)
+  const categories: Category[] = [
+    { id: 1, name: "筋トレ"},
+    { id: 2, name: "勉強"}
+  ]
   
+  useEffect(() => {
+    const saved = localStorage.getItem("todos")
+
+    if (saved) {
+      setTodos(JSON.parse(saved))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }, [todos])
 
   const handleAddTodos = () => {
     if (inputText.trim() === "") return
-    setTodos((prev) => [...prev, {id: Date.now(), text: inputText, status: "active", isEditing: false}])
+    setTodos((prev) => [...prev, {id: Date.now(), text: inputText, status: "active", isEditing: false, categoryId: selectCategoryId }])
     setInputText("")
   }
   
@@ -45,6 +64,11 @@ function App() {
     return searched
   }
 
+  const categorizeFilter = () => {
+    const filter = filteredTodo()
+    return filter.filter((todo) => todo.categoryId === selectCategoryId)
+  }
+
   useEffect(() => {
     const handleClick = () => {
       setEditingId(null)
@@ -61,8 +85,12 @@ function App() {
     <>
       {view === "detail" ?
         <TodoDetailView
+          todos={todos}
           view={view}
           setView={setView}
+          selectCategoryId={selectCategoryId}
+          categories={categories}
+          setSelectCategoryId={setSelectCategoryId}
         />:
         <TodoListView
           todos={todos}
@@ -77,6 +105,7 @@ function App() {
           setSearchText={setSearchText}
           setEditingId={setEditingId}
           filteredTodo={filteredTodo}
+          categorizeFilter={categorizeFilter}
           handleAddTodos={handleAddTodos}
           onToggle={handleToggle}
           onEdit={handleEditTodos}

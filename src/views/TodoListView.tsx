@@ -14,12 +14,14 @@ type Props = {
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
   filteredTodo: () => Todo[]
+  categorizeFilter: () => Todo[]
   handleAddTodos: () => void
   onToggle: (id: number) => void
   onEdit: (id: number, text: string) => void
 }
 
-function TodoListView({todos, filter, view, inputText, searchText, editingId, setEditingId, setView, setFilter, setInputText, setSearchText, filteredTodo, handleAddTodos, onToggle, onEdit}:Props) {
+function TodoListView({todos, filter, view, inputText, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
+  setSearchText, filteredTodo, categorizeFilter, handleAddTodos, onToggle, onEdit}:Props) {
 
   return (
     <>
@@ -49,7 +51,7 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
       </div>
 
       <div>
-        {filteredTodo().map((todo) => (
+        {categorizeFilter().map((todo) => (
         <TodoItem
           key={todo.id}
           todo={todo}
