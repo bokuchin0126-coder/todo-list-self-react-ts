@@ -1,4 +1,5 @@
 import type { View, Todo, Category } from '../types' 
+import { useState } from 'react'
 
 type Props = {
   todos: Todo[]
@@ -10,16 +11,26 @@ type Props = {
 }
 
 function TodoDetailView ({todos, view, setView, selectCategoryId, categories, setSelectCategoryId }: Props) {
+  
+  const [categoryText, setCategoryText] = useState<string>("")
   return (
-    <div>
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          onClick={() => {setSelectCategoryId(category.id), setView("list")}}>
-            {category.name}
-          </button>
-      ))}
-    </div>
+    <>
+      <div>
+        <input
+          value={categoryText}
+          onChange={(e) => setCategoryText(e.target.value)}
+        />
+      </div>
+      <div>
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => {setSelectCategoryId(category.id), setView("list")}}>
+              {category.name}
+            </button>
+        ))}
+      </div>
+    </>
   )
 }
 

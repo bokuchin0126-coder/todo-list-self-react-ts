@@ -8,9 +8,10 @@ type Props = {
     setEditingId: React.Dispatch<React.SetStateAction<number | null>>
     onToggle: (id: number) => void
     onEdit: (id: number, text: string) => void
+    onDelete: (id: number) => void
 }
 
-function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit }: Props) {
+function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit, onDelete }: Props) {
 
   const [editText, setEditText] = useState<string>(todo.text)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -36,6 +37,7 @@ function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit }: Props) {
         {isEditing ? (
           <button onClick={() => { onEdit(todo.id, editText); setEditingId(null)}}>保存</button>
         ) : <button onClick={(e) => { e.stopPropagation(); setEditingId(todo.id) }}>編集</button> }
+        <button onClick={() => onDelete(todo.id)}>消去</button>
       </div>
       </>
     )

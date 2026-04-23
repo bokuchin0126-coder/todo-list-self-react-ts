@@ -18,10 +18,11 @@ type Props = {
   handleAddTodos: () => void
   onToggle: (id: number) => void
   onEdit: (id: number, text: string) => void
+  onDelete: (id: number) => void
 }
 
 function TodoListView({todos, filter, view, inputText, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
-  setSearchText, filteredTodo, categorizeFilter, handleAddTodos, onToggle, onEdit}:Props) {
+  setSearchText, filteredTodo, categorizeFilter, handleAddTodos, onToggle, onEdit, onDelete}:Props) {
 
   return (
     <>
@@ -59,6 +60,7 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
           setEditingId={setEditingId}
           onToggle={onToggle}
           onEdit={onEdit}
+          onDelete={onDelete}
           />
         ))}
         <button onClick={() => setView("detail")}>戻る</button>

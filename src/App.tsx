@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import type { Todo, Filter, View, Category } from './types'
 import TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
@@ -38,6 +37,10 @@ function App() {
     setTodos((prev) => [...prev, {id: Date.now(), text: inputText, status: "active", isEditing: false, categoryId: selectCategoryId }])
     setInputText("")
   }
+
+  const handleDeleteTodo = (id: number) => {
+    setTodos((prev) => prev.filter(todo => todo.id !== id))
+  }
   
   const handleToggle = (id: number) => {
     setTodos((prev) => prev.map(todo => (
@@ -53,7 +56,7 @@ function App() {
   }
 
   function search() {
-    return todos.filter((todo) => todo.text.includes(searchText))
+    return todos.filter((todo) => todo.text.toLowerCase().includes(searchText.toLowerCase()))
   }
 
   const filteredTodo = () => {
@@ -109,6 +112,7 @@ function App() {
           handleAddTodos={handleAddTodos}
           onToggle={handleToggle}
           onEdit={handleEditTodos}
+          onDelete={handleDeleteTodo}
           />
       }
         
