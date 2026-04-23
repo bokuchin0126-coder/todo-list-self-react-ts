@@ -2,24 +2,33 @@ import type { View, Todo, Category } from '../types'
 import { useState } from 'react'
 
 type Props = {
-  todos: Todo[]
   view: View
   setView: (view: View) => void
   selectCategoryId: number
   categories: Category[]
+  categoryText: string
   setSelectCategoryId: (id: number) => void
+  setCategoryText: (text: string) => void
+  onAddCategories: () => void
 }
 
-function TodoDetailView ({todos, view, setView, selectCategoryId, categories, setSelectCategoryId }: Props) {
+function TodoDetailView ({view, setView, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
+  onAddCategories}: Props) {
   
-  const [categoryText, setCategoryText] = useState<string>("")
   return (
     <>
       <div>
         <input
           value={categoryText}
+          placeholder="カテゴリーを追加..."
           onChange={(e) => setCategoryText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onAddCategories()
+            }
+          }}
         />
+        <button onClick={() => onAddCategories}>追加</button>
       </div>
       <div>
         {categories.map((category) => (

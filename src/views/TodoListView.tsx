@@ -15,34 +15,36 @@ type Props = {
   setSearchText: (text: string) => void
   filteredTodo: () => Todo[]
   categorizeFilter: () => Todo[]
-  handleAddTodos: () => void
+  onAddTodos: () => void
   onToggle: (id: number) => void
   onEdit: (id: number, text: string) => void
   onDelete: (id: number) => void
 }
 
 function TodoListView({todos, filter, view, inputText, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
-  setSearchText, filteredTodo, categorizeFilter, handleAddTodos, onToggle, onEdit, onDelete}:Props) {
+  setSearchText, filteredTodo, categorizeFilter, onAddTodos, onToggle, onEdit, onDelete}:Props) {
 
   return (
     <>
       <div>
         <input
           value={searchText}
+          placeholder="検索する..."
           onChange={(e) => setSearchText(e.target.value)}
         />
 
         <input
           value={inputText}
+          placeholder="リストを追加する..."
           onChange={(e) => setInputText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              handleAddTodos()
+              onAddTodos()
             }
           }}
         />
       
-      <button onClick={handleAddTodos}>追加</button>
+      <button onClick={onAddTodos}>追加</button>
 
       <div>
         <button onClick={() => setFilter("all")}>全て</button>

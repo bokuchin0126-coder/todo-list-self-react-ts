@@ -15,10 +15,8 @@ function App() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [view, setView] = useState<View>("detail")
   const [selectCategoryId, setSelectCategoryId] = useState<number>(1)
-  const categories: Category[] = [
-    { id: 1, name: "筋トレ"},
-    { id: 2, name: "勉強"}
-  ]
+  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryText, setCategoryText] = useState<string>("")
   
   useEffect(() => {
     const saved = localStorage.getItem("todos")
@@ -31,6 +29,12 @@ function App() {
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
   }, [todos])
+
+  const handleAddCategories = () => {
+    if (categoryText.trim() === "") return
+    setCategories((prev) => [...prev, {id: Date.now(), name: categoryText}])
+    setCategoryText("")
+  }
 
   const handleAddTodos = () => {
     if (inputText.trim() === "") return
@@ -88,12 +92,14 @@ function App() {
     <>
       {view === "detail" ?
         <TodoDetailView
-          todos={todos}
           view={view}
           setView={setView}
           selectCategoryId={selectCategoryId}
           categories={categories}
+          categoryText={categoryText}
           setSelectCategoryId={setSelectCategoryId}
+          setCategoryText={setCategoryText}
+          onAddCategories={handleAddCategories}
         />:
         <TodoListView
           todos={todos}
@@ -109,7 +115,7 @@ function App() {
           setEditingId={setEditingId}
           filteredTodo={filteredTodo}
           categorizeFilter={categorizeFilter}
-          handleAddTodos={handleAddTodos}
+          onAddTodos={handleAddTodos}
           onToggle={handleToggle}
           onEdit={handleEditTodos}
           onDelete={handleDeleteTodo}
