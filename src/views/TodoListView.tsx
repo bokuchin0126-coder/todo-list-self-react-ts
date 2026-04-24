@@ -26,7 +26,7 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
 
   return (
     <>
-      <div>
+      <div className="input-group">
         <input
           value={searchText}
           placeholder="検索する..."
@@ -45,14 +45,14 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
         />
       
       <button onClick={onAddTodos}>追加</button>
-
-      <div>
-        <button onClick={() => setFilter("all")}>全て</button>
-        <button onClick={() => setFilter("completed")}>達成</button>
-        <button onClick={() => setFilter("active")}>未達成</button>
-      </div>
       </div>
 
+      <div className="filter-group">
+        <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>全て</button>
+        <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("completed")}>達成</button>
+        <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("active")}>未達成</button>
+      </div>
+      
       <div>
         {categorizeFilter().map((todo) => (
         <TodoItem

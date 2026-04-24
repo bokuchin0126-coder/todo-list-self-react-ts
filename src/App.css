@@ -1,0 +1,74 @@
+.container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.input-group input {
+    flex: 1;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.filter-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: center;
+}
+
+.todo-item {
+    display: grid;
+    align-items: center;
+    padding: 8px 0;
+    gap: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6px;
+    justify-content: space-between;
+    grid-template-columns: 40px 1fr auto auto;
+}
+
+.todo-item span {
+    flex: 1;
+}
+
+.todo-item:hover {
+    background: #f9f9f9;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.active {
+    background: #333;
+    color: white;
+}
+
+button {
+    padding: 6px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+button:hover {
+    background: #e5e5e5;
+}
+
+input {
+    padding: 6px;
+    flex: 1;
+}

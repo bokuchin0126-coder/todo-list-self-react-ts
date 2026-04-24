@@ -20,7 +20,7 @@ function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit, onDelete }:
 
     return (
       <>
-      <div ref={wrapperRef}>
+      <div ref={wrapperRef} className="todo-item">
         <button onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
         {isEditing ? (
           <input ref={inputRef}
@@ -32,7 +32,10 @@ function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit, onDelete }:
                 onEdit(todo.id, editText)
               }
             }} />
-          ) : todo.text}
+          ) : 
+          <span className={todo.status === "completed" ? "completed" : ""}>
+            {todo.text}
+          </span>}
 
         {isEditing ? (
           <button onClick={() => { onEdit(todo.id, editText); setEditingId(null)}}>保存</button>

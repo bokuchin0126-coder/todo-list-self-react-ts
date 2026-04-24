@@ -15,20 +15,20 @@ function App() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [view, setView] = useState<View>("detail")
   const [selectCategoryId, setSelectCategoryId] = useState<number>(1)
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<Category[]>(() => {
+    const seved = localStorage.getItem("categories")
+    return seved ? JSON.parse(seved) : []
+  })
   const [categoryText, setCategoryText] = useState<string>("")
-  
-  useEffect(() => {
-    const saved = localStorage.getItem("todos")
 
-    if (saved) {
-      setTodos(JSON.parse(saved))
-    }
-  }, [])
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
   }, [todos])
+
+  useEffect(() => {
+    localStorage.setItem("categories", JSON.stringify(categories))
+  }, [categories])
 
   const handleAddCategories = () => {
     if (categoryText.trim() === "") return
@@ -90,37 +90,39 @@ function App() {
 
   return (
     <>
-      {view === "detail" ?
-        <TodoDetailView
-          view={view}
-          setView={setView}
-          selectCategoryId={selectCategoryId}
-          categories={categories}
-          categoryText={categoryText}
-          setSelectCategoryId={setSelectCategoryId}
-          setCategoryText={setCategoryText}
-          onAddCategories={handleAddCategories}
-        />:
-        <TodoListView
-          todos={todos}
-          view={view}
-          setView={setView}
-          filter={filter}
-          inputText={inputText}
-          searchText={searchText}
-          editingId={editingId}
-          setFilter={setFilter}
-          setInputText={setInputText}
-          setSearchText={setSearchText}
-          setEditingId={setEditingId}
-          filteredTodo={filteredTodo}
-          categorizeFilter={categorizeFilter}
-          onAddTodos={handleAddTodos}
-          onToggle={handleToggle}
-          onEdit={handleEditTodos}
-          onDelete={handleDeleteTodo}
-          />
-      }
+      <div className="container">
+        {view === "detail" ?
+          <TodoDetailView
+            view={view}
+            setView={setView}
+            selectCategoryId={selectCategoryId}
+            categories={categories}
+            categoryText={categoryText}
+            setSelectCategoryId={setSelectCategoryId}
+            setCategoryText={setCategoryText}
+            onAddCategories={handleAddCategories}
+          />:
+          <TodoListView
+            todos={todos}
+            view={view}
+            setView={setView}
+            filter={filter}
+            inputText={inputText}
+            searchText={searchText}
+            editingId={editingId}
+            setFilter={setFilter}
+            setInputText={setInputText}
+            setSearchText={setSearchText}
+            setEditingId={setEditingId}
+            filteredTodo={filteredTodo}
+            categorizeFilter={categorizeFilter}
+            onAddTodos={handleAddTodos}
+            onToggle={handleToggle}
+            onEdit={handleEditTodos}
+            onDelete={handleDeleteTodo}
+            />
+        }
+      </div>
         
     </>
   )
