@@ -72,9 +72,15 @@ function App() {
   }
 
   const categorizeFilter = () => {
-    const filter = filteredTodo()
-    return filter.filter((todo) => todo.categoryId === selectCategoryId)
+    const list = filteredTodo()
+    if (!selectCategoryId) return list
+    return list.filter((todo) => todo.categoryId === selectCategoryId)
   }
+
+  const handleDeleteCategory = (id: number) => {
+    setCategories((prev) => prev.filter(category => category.id !== id))
+    setTodos((prev) => prev.filter(todo => todo.categoryId !== id))
+  } 
 
   useEffect(() => {
     const handleClick = () => {
@@ -101,6 +107,7 @@ function App() {
             setSelectCategoryId={setSelectCategoryId}
             setCategoryText={setCategoryText}
             onAddCategories={handleAddCategories}
+            onDeleteCategory={handleDeleteCategory}
           />:
           <TodoListView
             todos={todos}

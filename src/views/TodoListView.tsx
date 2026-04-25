@@ -52,6 +52,7 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("completed")}>達成</button>
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("active")}>未達成</button>
       </div>
+      {todos.length === 0 && <p>タスクがありません</p>} 
       
       <div>
         {categorizeFilter().map((todo) => (

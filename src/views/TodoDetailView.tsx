@@ -10,10 +10,11 @@ type Props = {
   setSelectCategoryId: (id: number) => void
   setCategoryText: (text: string) => void
   onAddCategories: () => void
+  onDeleteCategory: (id: number) => void
 }
 
 function TodoDetailView ({view, setView, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
-  onAddCategories}: Props) {
+  onAddCategories, onDeleteCategory}: Props) {
   
   return (
     <>
@@ -32,11 +33,13 @@ function TodoDetailView ({view, setView, selectCategoryId, categories, categoryT
       </div>
       <div>
         {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => {setSelectCategoryId(category.id), setView("list")}}>
-              {category.name}
-            </button>
+          <div key={category.id}>
+            <button
+              onClick={() => {setSelectCategoryId(category.id), setView("list")}}>
+                {category.name}
+              </button>
+            <button onClick={() => onDeleteCategory(category.id)}>消去</button>
+          </div>
         ))}
       </div>
     </>
