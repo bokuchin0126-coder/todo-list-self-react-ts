@@ -1,5 +1,5 @@
 import type { Todo } from '../types'
-import {useState} from 'react'
+import {useState, useEffect, useRef} from 'react'
 
 type Props = {
   todo: Todo
@@ -12,21 +12,49 @@ type Props = {
 
 function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: Props) {
 
-    const [editText, setEditText] = useState<string>(todo.text)
+    const [editText, setEditText] = useState<string>("")
+    const inputRef = useRef<HTMLInputElement | null>(null)
 
     const changeEditingId = (id: number) => {
-      if (!editingId) return setEditingId(id)
-      else setEditingId(null)
+      if (editingId === id) {
+        setEditingId(null)
+      } else {
+        setEditingId(id)
+      }
     }
+
+    useEffect(() => {
+
+      const handleClickOutside = (e: MouseEvent) => {
+        if (editingId === todo.id && inputRef.current && !inputRef.current.contains(e.target as Node)) {
+          setEditText(todo.text)
+          setEditingId(null)
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside)
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside)
+      }
+    }, [editingId, todo.id, todo.text])
+
+    useEffect(() => {
+      if (editingId === todo.id) {
+        setEditText(todo.text)
+      }
+    }, [editingId, todo.text])
 
     return (
       <>
         <div>
           <button onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
 
-          {editingId ? (
+          {editingId === todo.id ? (
               <input
+                ref={inputRef}
                 value={editText}
+                autoFocus
                 onChange={(e) => setEditText(e.target.value)}
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -39,7 +67,16 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
             <span>{todo.text}</span>
           )}
 
-          <button onClick={() => {onEdit(todo.id, editText), changeEditingId(todo.id)}}>{editingId ? "保存" : "編集"}</button>
+          {editingId !== todo.id && (
+          <button onClick={() => changeEditingId(todo.id)}>編集</button>
+          )}
+          {editingId === todo.id && (
+          <button onClick={() =>
+            {onEdit(todo.id, editText) 
+            setEditingId(null)}}>
+              保存
+          </button>
+          )}
           <button onClick={() => onDelete(todo.id)}>消去</button>
         </div>
       </>

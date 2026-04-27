@@ -4,10 +4,12 @@ import type { Todo, Filter, View } from '../types'
 type Props = {
   todos: Todo[]
   inputText: string
+  searchText: string
   filter: Filter
   editingId: (number | null)
   categoriesTodos: Todo[]
   setInputText: (text: string) => void
+  setSearchText: (text: string) => void
   setFilter: (filter: Filter) => void
   setEditingId: (id: number | null) => void
   setView: (view: View) => void
@@ -18,15 +20,23 @@ type Props = {
   onDelete: (id: number) => void
 }
 
-function TodoListView ({todos, inputText, filter, editingId, categoriesTodos, setInputText, setFilter, setEditingId, setView, filteredTodos, onAddTodos, onToggle, 
-    onEdit, onDelete}: Props) {
+function TodoListView ({todos, inputText, searchText, filter, editingId, categoriesTodos, setInputText, setSearchText, setFilter, setEditingId,
+  setView, filteredTodos, onAddTodos, onToggle, onEdit, onDelete}: Props) {
   return (
     <>
       <div>
-         <div>
+        <div>
+          <input
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="検索..."
+            />
+        </div>
+        <div>
             <input
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
+                placeholder="リストを追加..."
                 onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     onAddTodos(inputText)

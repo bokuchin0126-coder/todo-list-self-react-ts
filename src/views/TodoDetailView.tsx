@@ -21,6 +21,7 @@ function TodoDetailView ({view, categories, selectCategoryId, setView, setCatego
             <input
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
+              placeholder="カテゴリーを追加..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     onAddCategories(inputText)
