@@ -2,7 +2,14 @@ export type Todo = {
     id: number
     text: string
     status: "completed" | "active"
-    isEditing: boolean
+    categoryId: string
 }
 
-export type filter = "all" | "completed" | "active"
+export type Category = {
+    id: string
+    name: string
+}
+
+export type View = "list" | "detail"
+
+export type Filter = "all" | "completed" | "active"

@@ -1,20 +1,23 @@
-import { useState, useEffect } from 'react'
-import type { Todo } from './types'
-import type { filter } from './types'
-import  TodoItem from './Todoitem'
+import { useState } from 'react'
+import type { Todo, Filter, View, Category } from './types'
+import  TodoListView from './views/TodoListView'
+import TodoDetailView from './views/TodoDetailView'
 import './App.css'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [inputText, setInputText] = useState<string>("")
-  const [filter, setFilter] = useState<filter>("all")
+  const [filter, setFilter] = useState<Filter>("all")
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [view, setView] = useState<View>("detail")
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectCategoryId, setSelectCategoryId] = useState<string>("1")
   
 
   const handleAddTodos = (text: string) => {
     if (text.trim() === "") return 
 
-    const addTodo: Todo = {id: Date.now(), text: text, status: "active", isEditing: false}
+    const addTodo: Todo = {id: Date.now(), text: text, status: "active", categoryId: selectCategoryId}
     setTodos((prev) => [...prev, addTodo])
     setInputText("")
   }
@@ -29,8 +32,17 @@ function App() {
     if (text.trim() === "") return 
 
     setTodos((prev) => prev.map(todo => (
-      todo.id === id ? {...todo, text: text, isEditing: false} : todo
+      todo.id === id ? {...todo, text: text} : todo
     )))
+  }
+
+  const handleDeleteTodo = (id: number) => {
+    setTodos((prev) => prev.filter(todo => todo.id !== id))
+  }
+
+  const handleAddCategories = (text: string) => {
+    if (text.trim() === "") return
+    setCategories((prev) => [...prev, {id: crypto.randomUUID(), name: text}])
   }
 
   const filteredTodos = todos.filter((todo) => {
@@ -38,39 +50,39 @@ function App() {
     if (filter === "completed") return todo.status === "completed"
     return true
   })
-  
-  
+
+  const categoriesTodos = filteredTodos.filter((todo) => todo.categoryId === selectCategoryId)
 
   return (
     <>
-      <div>
-        <input
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleAddTodos(inputText)
-            }
-          }}/>
-          <button onClick={() => handleAddTodos(inputText)}>追加</button>
-      </div>
-      <div>
-        <button onClick={() => setFilter("all")}>全て</button>
-        <button onClick={() => setFilter("active")}>未達成</button>
-        <button onClick={() => setFilter("completed")}>達成</button>
-      </div>
-      <div>
-        {filteredTodos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            editingId={editingId}
-            setEditingId={setEditingId}
-            onToggle={handleToggle}
-            onEdit={handleEdit}
-          />
-        ))}
-      </div>
+      {view === "detail" ? 
+        <TodoDetailView
+          view={view}
+          categories={categories}
+          selectCategoryId={selectCategoryId}
+          setView={setView}
+          setCategories={setCategories}
+          setSelectCategoryId={setSelectCategoryId}
+          onAddCategories={handleAddCategories}
+        />
+      :
+        <TodoListView
+          todos={todos}
+          inputText={inputText}
+          filter={filter}
+          editingId={editingId}
+          categoriesTodos={categoriesTodos}
+          setInputText={setInputText}
+          setFilter={setFilter}
+          setEditingId={setEditingId}
+          setView={setView}
+          filteredTodos={filteredTodos}
+          onAddTodos={handleAddTodos}
+          onToggle={handleToggle}
+          onEdit={handleEdit}
+          onDelete={handleDeleteTodo}
+        />
+      }
     </>
   )
 }
