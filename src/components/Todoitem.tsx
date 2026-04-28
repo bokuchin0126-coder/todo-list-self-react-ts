@@ -13,7 +13,7 @@ type Props = {
 function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: Props) {
 
     const [editText, setEditText] = useState<string>("")
-    const inputRef = useRef<HTMLInputElement | null>(null)
+    const inputRef = useRef<HTMLDivElement | null>(null)
 
     const changeEditingId = (id: number) => {
       if (editingId === id) {
@@ -26,6 +26,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
     useEffect(() => {
 
       const handleClickOutside = (e: MouseEvent) => {
+
         if (editingId === todo.id && inputRef.current && !inputRef.current.contains(e.target as Node)) {
           setEditText(todo.text)
           setEditingId(null)
@@ -43,16 +44,15 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
       if (editingId === todo.id) {
         setEditText(todo.text)
       }
-    }, [editingId, todo.text])
+    }, [editingId])
 
     return (
       <>
-        <div>
+        <div ref={inputRef}>
           <button onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
 
           {editingId === todo.id ? (
               <input
-                ref={inputRef}
                 value={editText}
                 autoFocus
                 onChange={(e) => setEditText(e.target.value)}
@@ -70,10 +70,12 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
           {editingId !== todo.id && (
           <button onClick={() => changeEditingId(todo.id)}>編集</button>
           )}
+
           {editingId === todo.id && (
-          <button onClick={() =>
-            {onEdit(todo.id, editText) 
-            setEditingId(null)}}>
+          <button onClick={() => {
+            onEdit(todo.id, editText) 
+            setEditingId(null)
+            }}>
               保存
           </button>
           )}
