@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Todo, Filter, View, Category } from './types'
+import type { Todo, Filter, View, Category, SavedCategory } from './types'
 import  TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
 import './App.css'
@@ -19,7 +19,8 @@ function App() {
     return saved ? JSON.parse(saved) : []
   })
   const [selectCategoryId, setSelectCategoryId] = useState<string>("1")
-  
+  const [savedCategory, setSavedCategory] = useState<SavedCategory[]>([])
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
   }, [todos])
@@ -59,17 +60,19 @@ function App() {
     setCategories((prev) => [...prev, {id: crypto.randomUUID(), name: text}])
   }
 
+  const saveCategories = setSavedCategory((prev) => [...prev, {id: 1, date: categories}])
+
   const filteredTodos = todos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
     if (filter === "completed") return todo.status === "completed"
     return true
   })
 
-  const searchFilter = filteredTodos.filter((todo) => {
+  const categoriesTodos = filteredTodos.filter((todo) => todo.categoryId === selectCategoryId)
+
+  const searchFilter = categoriesTodos.filter((todo) => {
     if (todo.text.toLowerCase().includes(searchText.toLowerCase())) return true
   })
-
-  const categoriesTodos = searchFilter.filter((todo) => todo.categoryId === selectCategoryId)
 
   return (
     <>
@@ -81,6 +84,7 @@ function App() {
           setView={setView}
           setCategories={setCategories}
           setSelectCategoryId={setSelectCategoryId}
+          categoriesTodos={categoriesTodos}
           onAddCategories={handleAddCategories}
         />
       :
@@ -96,7 +100,7 @@ function App() {
           setFilter={setFilter}
           setEditingId={setEditingId}
           setView={setView}
-          filteredTodos={filteredTodos}
+          searchFilter={searchFilter}
           onAddTodos={handleAddTodos}
           onToggle={handleToggle}
           onEdit={handleEdit}

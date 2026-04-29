@@ -1,4 +1,4 @@
-import type { View, Category } from '../types'
+import type { View, Category, Todo } from '../types'
 import {useState} from 'react'
 
 type Props = {
@@ -8,12 +8,20 @@ type Props = {
     setView: (view: View) => void
     setCategories: (categories: Category[]) => void
     setSelectCategoryId: (id: string) => void
+    categoriesTodos: Todo[]
     onAddCategories: (text: string) => void
 }
 
-function TodoDetailView ({view, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, onAddCategories}: Props) {
+function TodoDetailView ({view, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
+  onAddCategories}: Props) {
 
     const [inputText, setInputText] = useState<string>("")
+
+    const achievement = categoriesTodos.filter((category) => category.status === "completed")
+
+    const achievementRate = () => {
+      return (achievement.length / categoriesTodos.length) * 100
+    }
 
     return (
       <>
@@ -34,14 +42,17 @@ function TodoDetailView ({view, categories, selectCategoryId, setView, setCatego
 
           <div>
             {categories.map(category => (
-              <button
-                key={category.id}
-                onClick={() => {
-                  setSelectCategoryId(category.id)
-                  setView("list")
-                  setInputText("")}}>
-                    {category.name}
-              </button>
+              <div key={category.id}>
+                <p>{category.name}</p>
+                <button
+                  onClick={() => {
+                    setSelectCategoryId(category.id)
+                    setView("list")
+                    setInputText("")}}>
+                      ▽
+                </button>
+                <p >達成率{achievementRate()}</p>
+              </div>
             ))}
           </div>
             

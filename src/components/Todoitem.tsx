@@ -13,7 +13,7 @@ type Props = {
 function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: Props) {
 
     const [editText, setEditText] = useState<string>("")
-    const inputRef = useRef<HTMLDivElement | null>(null)
+    const containerRef = useRef<HTMLDivElement | null>(null)
 
     const changeEditingId = (id: number) => {
       if (editingId === id) {
@@ -27,7 +27,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
 
       const handleClickOutside = (e: MouseEvent) => {
 
-        if (editingId === todo.id && inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        if (editingId === todo.id && containerRef.current && !containerRef.current.contains(e.target as Node)) {
           setEditText(todo.text)
           setEditingId(null)
         }
@@ -48,7 +48,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
 
     return (
       <>
-        <div ref={inputRef}>
+        <div ref={containerRef}>
           <button onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
 
           {editingId === todo.id ? (

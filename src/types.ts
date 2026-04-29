@@ -10,6 +10,11 @@ export type Category = {
     name: string
 }
 
+export type SavedCategory = {
+    id : number
+    date: {}
+}
+
 export type View = "list" | "detail"
 
 export type Filter = "all" | "completed" | "active"

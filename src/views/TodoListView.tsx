@@ -13,7 +13,7 @@ type Props = {
   setFilter: (filter: Filter) => void
   setEditingId: (id: number | null) => void
   setView: (view: View) => void
-  filteredTodos: Todo[]
+  searchFilter: Todo[]
   onAddTodos: (text: string) => void
   onToggle: (id: number) => void
   onEdit: (id: number, text: string) => void
@@ -21,7 +21,8 @@ type Props = {
 }
 
 function TodoListView ({todos, inputText, searchText, filter, editingId, categoriesTodos, setInputText, setSearchText, setFilter, setEditingId,
-  setView, filteredTodos, onAddTodos, onToggle, onEdit, onDelete}: Props) {
+  setView, searchFilter, onAddTodos, onToggle, onEdit, onDelete}: Props) {
+
   return (
     <>
       <div>
@@ -31,6 +32,7 @@ function TodoListView ({todos, inputText, searchText, filter, editingId, categor
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="検索..."
             />
+          <p>{searchFilter.length === 0 ? "0件" : searchFilter.length + "/" + categoriesTodos.length}</p>
         </div>
         <div>
             <input
@@ -49,7 +51,7 @@ function TodoListView ({todos, inputText, searchText, filter, editingId, categor
             <button onClick={() => setFilter("active")}>未達成</button>
             <button onClick={() => setFilter("completed")}>達成</button>
         </div>
-        {categoriesTodos.map(todo => (
+        {searchFilter.map(todo => (
           <TodoItem
             key={todo.id}
             todo={todo}
