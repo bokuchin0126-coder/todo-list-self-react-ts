@@ -14,7 +14,7 @@ function App() {
   const [filter, setFilter] = useState<Filter>("all")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [view, setView] = useState<View>("detail")
-  const [selectCategoryId, setSelectCategoryId] = useState<number>(1)
+  const [selectCategoryId, setSelectCategoryId] = useState<string>("")
   const [categories, setCategories] = useState<Category[]>(() => {
     const seved = localStorage.getItem("categories")
     return seved ? JSON.parse(seved) : []
@@ -32,7 +32,7 @@ function App() {
 
   const handleAddCategories = () => {
     if (categoryText.trim() === "") return
-    setCategories((prev) => [...prev, {id: Date.now(), name: categoryText}])
+    setCategories((prev) => [...prev, {id: Date.now().toLocaleString(), name: categoryText}])
     setCategoryText("")
   }
 
@@ -77,7 +77,7 @@ function App() {
     return list.filter((todo) => todo.categoryId === selectCategoryId)
   }
 
-  const handleDeleteCategory = (id: number) => {
+  const handleDeleteCategory = (id: string) => {
     setCategories((prev) => prev.filter(category => category.id !== id))
     setTodos((prev) => prev.filter(todo => todo.categoryId !== id))
   } 
@@ -100,6 +100,7 @@ function App() {
         {view === "detail" ?
           <TodoDetailView
             view={view}
+            todos={todos}
             setView={setView}
             selectCategoryId={selectCategoryId}
             categories={categories}

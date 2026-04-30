@@ -3,18 +3,25 @@ import { useState } from 'react'
 
 type Props = {
   view: View
+  todos: Todo[]
   setView: (view: View) => void
-  selectCategoryId: number
+  selectCategoryId: string
   categories: Category[]
   categoryText: string
-  setSelectCategoryId: (id: number) => void
+  setSelectCategoryId: (id: string) => void
   setCategoryText: (text: string) => void
   onAddCategories: () => void
-  onDeleteCategory: (id: number) => void
+  onDeleteCategory: (id: string) => void
 }
 
-function TodoDetailView ({view, setView, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
+function TodoDetailView ({view, todos, setView, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
   onAddCategories, onDeleteCategory}: Props) {
+
+  const categoryTodo = (categoryId: string) => {
+    const category = todos.filter((todo) => todo.categoryId === categoryId)
+    const completed = category.filter((category) => category.status === "completed")
+    return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
+  }
   
   return (
     <>
@@ -39,6 +46,7 @@ function TodoDetailView ({view, setView, selectCategoryId, categories, categoryT
                 {category.name}
               </button>
             <button onClick={() => onDeleteCategory(category.id)}>消去</button>
+            <p>達成率{categoryTodo(category.id)}%</p>
           </div>
         ))}
       </div>

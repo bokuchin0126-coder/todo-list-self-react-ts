@@ -2,12 +2,11 @@ export type Todo = {
     id: number
     text: string
     status: "completed" | "active"
-    isEditing: boolean
-    categoryId: number
+    categoryId: string
 }
 
 export type Category = {
-    id: number
+    id: string
     name: string
 }
 
