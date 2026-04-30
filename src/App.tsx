@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Todo, Filter, View, Category, SavedCategory } from './types'
+import type { Todo, Filter, View, Category } from './types'
 import  TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
 import './App.css'
@@ -19,7 +19,6 @@ function App() {
     return saved ? JSON.parse(saved) : []
   })
   const [selectCategoryId, setSelectCategoryId] = useState<string>("1")
-  const [savedCategory, setSavedCategory] = useState<SavedCategory[]>([])
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
@@ -60,8 +59,6 @@ function App() {
     setCategories((prev) => [...prev, {id: crypto.randomUUID(), name: text}])
   }
 
-  const saveCategories = setSavedCategory((prev) => [...prev, {id: 1, date: categories}])
-
   const filteredTodos = todos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
     if (filter === "completed") return todo.status === "completed"
@@ -79,6 +76,7 @@ function App() {
       {view === "detail" ? 
         <TodoDetailView
           view={view}
+          todos={todos}
           categories={categories}
           selectCategoryId={selectCategoryId}
           setView={setView}

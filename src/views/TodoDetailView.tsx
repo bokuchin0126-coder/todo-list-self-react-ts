@@ -3,6 +3,7 @@ import {useState} from 'react'
 
 type Props = {
     view: View
+    todos: Todo[]
     categories: Category[]
     selectCategoryId: string
     setView: (view: View) => void
@@ -12,17 +13,17 @@ type Props = {
     onAddCategories: (text: string) => void
 }
 
-function TodoDetailView ({view, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
+function TodoDetailView ({view, todos, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
   onAddCategories}: Props) {
 
     const [inputText, setInputText] = useState<string>("")
 
-    const achievement = categoriesTodos.filter((category) => category.status === "completed")
-
-    const achievementRate = () => {
-      return (achievement.length / categoriesTodos.length) * 100
+    const categoryTodo = (categoryId: string) => {
+      const category = todos.filter((todo) => todo.categoryId === categoryId)
+      const completed = category.filter((category) => category.status === "completed")
+      return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
     }
-
+    
     return (
       <>
         <div>
@@ -51,7 +52,7 @@ function TodoDetailView ({view, categories, selectCategoryId, setView, setCatego
                     setInputText("")}}>
                       ▽
                 </button>
-                <p >達成率{achievementRate()}</p>
+                <p>達成率{categoryTodo(category.id)}</p>
               </div>
             ))}
           </div>
