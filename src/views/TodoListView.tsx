@@ -1,5 +1,6 @@
 import type { Todo, Filter, View } from '../types'
 import TodoItem from '../components/Todoitem'
+import { memo } from "react"
 
 type Props = {
   todos: Todo[]
@@ -7,8 +8,8 @@ type Props = {
   filter: Filter
   inputText: string
   searchText: string
-  editingId: number | null
-  setEditingId: React.Dispatch<React.SetStateAction<number | null>>
+  editingId: string | null
+  setEditingId: React.Dispatch<React.SetStateAction<string | null>>
   setView: (view: View) => void
   setFilter: (filter: Filter) => void
   setInputText: (text: string) => void
@@ -16,14 +17,15 @@ type Props = {
   filteredTodo: () => Todo[]
   categorizeFilter: () => Todo[]
   onAddTodos: () => void
-  onToggle: (id: number) => void
-  onEdit: (id: number, text: string) => void
-  onDelete: (id: number) => void
+  onToggle: (id: string) => void
+  onEdit: (id: string, text: string) => void
+  onDelete: (id: string) => void
 }
 
 function TodoListView({todos, filter, view, inputText, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
   setSearchText, filteredTodo, categorizeFilter, onAddTodos, onToggle, onEdit, onDelete}:Props) {
 
+  
   return (
     <>
       <div className="input-group">

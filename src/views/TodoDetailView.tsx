@@ -17,6 +17,7 @@ type Props = {
 function TodoDetailView ({view, todos, setView, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
   onAddCategories, onDeleteCategory}: Props) {
 
+
   const categoryTodo = (categoryId: string) => {
     const category = todos.filter((todo) => todo.categoryId === categoryId)
     const completed = category.filter((category) => category.status === "completed")

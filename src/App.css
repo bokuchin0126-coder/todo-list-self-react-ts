@@ -11,13 +11,13 @@
     display: flex;
     gap: 8px;
     margin-bottom: 16px;
+    & input {
+        flex: 1;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
 }
 
-.input-group input {
-    flex: 1;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
 
 .filter-group {
     display: flex;
@@ -36,14 +36,12 @@
     padding-bottom: 6px;
     justify-content: space-between;
     grid-template-columns: 40px 1fr auto auto;
-}
-
-.todo-item span {
-    flex: 1;
-}
-
-.todo-item:hover {
-    background: #f9f9f9;
+    & span {
+        flex: 1;
+    }
+    & hover {
+        background: #f9f9f9;
+    }
 }
 
 .completed {
@@ -62,11 +60,11 @@ button {
     border: 1px solid #ccc;
     background: #f5f5f5;
     border-radius: 6px;
+    & hover {
+        background: #e5e5e5;
+    }
 }
 
-button:hover {
-    background: #e5e5e5;
-}
 
 input {
     padding: 6px;

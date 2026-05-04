@@ -4,11 +4,11 @@ import { useRef } from 'react'
 
 type Props = {
     todo: Todo
-    editingId: number | null
-    setEditingId: React.Dispatch<React.SetStateAction<number | null>>
-    onToggle: (id: number) => void
-    onEdit: (id: number, text: string) => void
-    onDelete: (id: number) => void
+    editingId: string | null
+    setEditingId: React.Dispatch<React.SetStateAction<string | null>>
+    onToggle: (id: string) => void
+    onEdit: (id: string, text: string) => void
+    onDelete: (id: string) => void
 }
 
 function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit, onDelete }: Props) {

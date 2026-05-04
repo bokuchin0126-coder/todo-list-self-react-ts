@@ -1,5 +1,5 @@
 export type Todo = {
-    id: number
+    id: string
     text: string
     status: "completed" | "active"
     categoryId: string
@@ -8,6 +8,12 @@ export type Todo = {
 export type Category = {
     id: string
     name: string
+}
+
+export type ApiTodo = {
+    id: string
+    title: string
+    completed: boolean
 }
 
 export type View = "list" | "detail"

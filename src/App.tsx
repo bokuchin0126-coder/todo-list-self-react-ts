@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Todo, Filter, View, Category } from './types'
+import type { Todo, Filter, View, Category, ApiTodo } from './types'
 import TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
 import './App.css'
@@ -12,7 +12,7 @@ function App() {
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<Filter>("all")
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [view, setView] = useState<View>("detail")
   const [selectCategoryId, setSelectCategoryId] = useState<string>("")
   const [categories, setCategories] = useState<Category[]>(() => {
@@ -20,7 +20,36 @@ function App() {
     return seved ? JSON.parse(seved) : []
   })
   const [categoryText, setCategoryText] = useState<string>("")
+  const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    const saved = localStorage.getItem("todos")
+    if (saved) {
+      setTodos(JSON.parse(saved))
+      setLoading(false)
+      return 
+    }
+    const fetchDate = async () => {
+      try {
+        const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
+        const date = await (res).json()
+
+        const converted = date.map((item: ApiTodo) => ({
+          id: item.id.toString(),
+          text: item.title,
+          status: item.completed ? "completed" : "active",
+          categoryId: null
+        }))
+
+        setTodos(converted)
+      } catch (e) {
+        console.log("取得失敗", e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDate()
+  }, [])
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
@@ -36,23 +65,107 @@ function App() {
     setCategoryText("")
   }
 
-  const handleAddTodos = () => {
-    if (inputText.trim() === "") return
-    setTodos((prev) => [...prev, {id: Date.now(), text: inputText, status: "active", isEditing: false, categoryId: selectCategoryId }])
-    setInputText("")
+  const handleAddTodos = async () => {
+    if (inputText.trim() === "") return 
+    if (loading) return
+    setLoading(true)
+
+    try {
+      const res = await fetch(`https://jsonplaceholder.typicode.com/todos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: inputText,
+          completed: false
+        })
+      })
+      const date = await res.json()
+
+      const newTodo: Todo = {
+        id: Date.now().toString(),
+        text: date.title,
+        status: "active",
+        categoryId: selectCategoryId
+      }
+
+      setTodos(prev => {
+        const next = [...prev, newTodo]
+        localStorage.setItem("todos", JSON.stringify(next))
+        return next
+      })
+      setInputText("")
+
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleDeleteTodo = (id: number) => {
-    setTodos((prev) => prev.filter(todo => todo.id !== id))
+  const handleDeleteTodo = async (id: string) => {
+    if (loading) return
+    setLoading(true)
+
+    try {
+      await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+        method: "DELETE"
+      })
+      setTodos(prev => {
+        const next = prev.filter(todo => todo.id !== id)
+        localStorage.setItem("todos", JSON.stringify(next))
+        return next
+      })
+
+    } catch (e) {
+      console.log("消去失敗", e)
+    } finally {
+      setLoading(false)
+    }
   }
   
-  const handleToggle = (id: number) => {
-    setTodos((prev) => prev.map(todo => (
-      todo.id === id ? {...todo, status: todo.status === "active" ? "completed" : "active"} : todo
-    )))
+  const handleToggle = async (id: string) => {
+    if (loading) return
+    setLoading(true)
+
+    try {
+      const target = todos.find(t => t.id === id)
+      if (!target) return
+
+      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          completed: target.status !== "completed"
+        })
+      })
+      const date = await res.json()
+
+      const updateTodo: Todo = {
+        id: id,
+        text: date.title ?? target.text,
+        status: date.completed ? "completed" : "active",
+        categoryId: target.categoryId
+      }
+     setTodos((prev: Todo[]) => {
+      const next = prev.map(todo => (
+        todo.id === id ? updateTodo : todo
+      ))
+      localStorage.setItem("todos", JSON.stringify(next))
+      return next
+     })
+
+    } catch {
+      console.log("更新失敗")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleEditTodos = (id: number, text: string) => {
+  const handleEditTodos = (id: string, text: string) => {
     if (text.trim() === "" ) return 
     setTodos((prev) => prev.map(todo => (
       todo.id === id ? {...todo, text: text, isEditing: false} : todo
