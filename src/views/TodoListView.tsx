@@ -9,6 +9,8 @@ type Props = {
   inputText: string
   searchText: string
   editingId: string | null
+  error: string | null
+  loading: true | false
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>
   setView: (view: View) => void
   setFilter: (filter: Filter) => void
@@ -22,7 +24,7 @@ type Props = {
   onDelete: (id: string) => void
 }
 
-function TodoListView({todos, filter, view, inputText, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
+function TodoListView({todos, filter, view, inputText, error, loading, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
   setSearchText, filteredTodo, categorizeFilter, onAddTodos, onToggle, onEdit, onDelete}:Props) {
 
   
@@ -34,7 +36,7 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
           placeholder="検索する..."
           onChange={(e) => setSearchText(e.target.value)}
         />
-
+        
         <input
           value={inputText}
           placeholder="リストを追加する..."
@@ -55,6 +57,8 @@ function TodoListView({todos, filter, view, inputText, searchText, editingId, se
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("active")}>未達成</button>
       </div>
       {todos.length === 0 && <p>タスクがありません</p>} 
+      {loading && <p>ローディング中...</p>}
+      {error && <p>{error}</p>}
       
       <div>
         {categorizeFilter().map((todo) => (

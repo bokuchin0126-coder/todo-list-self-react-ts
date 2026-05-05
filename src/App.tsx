@@ -21,6 +21,7 @@ function App() {
   })
   const [categoryText, setCategoryText] = useState<string>("")
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem("todos")
@@ -42,10 +43,11 @@ function App() {
         }))
 
         setTodos(converted)
-      } catch (e) {
-        console.log("取得失敗", e)
+      } catch {
+        setError("データの取得に失敗しました")
       } finally {
         setLoading(false)
+        setError(null)
       }
     }
     fetchDate()
@@ -90,17 +92,15 @@ function App() {
         categoryId: selectCategoryId
       }
 
-      setTodos(prev => {
-        const next = [...prev, newTodo]
-        localStorage.setItem("todos", JSON.stringify(next))
-        return next
-      })
+      setTodos(prev => [...prev, newTodo])
+    
       setInputText("")
 
-    } catch (e) {
-      console.log(e)
+    } catch {
+      setError("リスト追加に失敗しました")
     } finally {
       setLoading(false)
+      setError(null)
     }
   }
 
@@ -112,16 +112,13 @@ function App() {
       await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: "DELETE"
       })
-      setTodos(prev => {
-        const next = prev.filter(todo => todo.id !== id)
-        localStorage.setItem("todos", JSON.stringify(next))
-        return next
-      })
+      setTodos(prev => prev.filter(todo => todo.id !== id))
 
-    } catch (e) {
-      console.log("消去失敗", e)
+    } catch {
+      setError("データの消去に失敗しました")
     } finally {
       setLoading(false)
+      setError(null)
     }
   }
   
@@ -150,18 +147,16 @@ function App() {
         status: date.completed ? "completed" : "active",
         categoryId: target.categoryId
       }
-     setTodos((prev: Todo[]) => {
-      const next = prev.map(todo => (
+     setTodos((prev: Todo[]) => prev.map(todo => (
         todo.id === id ? updateTodo : todo
-      ))
-      localStorage.setItem("todos", JSON.stringify(next))
-      return next
-     })
+      )))
+    
 
     } catch {
-      console.log("更新失敗")
+      setError("データの更新に失敗しました")
     } finally {
       setLoading(false)
+      setError(null)
     }
   }
 
@@ -217,6 +212,8 @@ function App() {
             setView={setView}
             selectCategoryId={selectCategoryId}
             categories={categories}
+            error={error}
+            loading={loading}
             categoryText={categoryText}
             setSelectCategoryId={setSelectCategoryId}
             setCategoryText={setCategoryText}
@@ -231,6 +228,8 @@ function App() {
             inputText={inputText}
             searchText={searchText}
             editingId={editingId}
+            error={error}
+            loading={loading}
             setFilter={setFilter}
             setInputText={setInputText}
             setSearchText={setSearchText}

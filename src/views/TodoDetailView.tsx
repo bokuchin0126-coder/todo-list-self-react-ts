@@ -8,13 +8,15 @@ type Props = {
   selectCategoryId: string
   categories: Category[]
   categoryText: string
+  error: string | null
+  loading: true | false
   setSelectCategoryId: (id: string) => void
   setCategoryText: (text: string) => void
   onAddCategories: () => void
   onDeleteCategory: (id: string) => void
 }
 
-function TodoDetailView ({view, todos, setView, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
+function TodoDetailView ({view, todos, setView, selectCategoryId, categories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
   onAddCategories, onDeleteCategory}: Props) {
 
 
