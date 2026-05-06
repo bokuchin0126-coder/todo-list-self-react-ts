@@ -5,6 +5,8 @@ type Props = {
     view: View
     todos: Todo[]
     categories: Category[]
+    error: string | null
+    loading: boolean
     selectCategoryId: string
     setView: (view: View) => void
     setCategories: (categories: Category[]) => void
@@ -14,7 +16,7 @@ type Props = {
 }
 
 function TodoDetailView ({view, todos, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
-  onAddCategories}: Props) {
+  error, loading, onAddCategories}: Props) {
 
     const [inputText, setInputText] = useState<string>("")
 
@@ -40,6 +42,8 @@ function TodoDetailView ({view, todos, categories, selectCategoryId, setView, se
             />
             <button onClick={() => onAddCategories(inputText)}>追加</button>
           </div>
+        {error && <p>{error}</p>}
+        {loading && <p>ローディング中...</p>}
 
           <div>
             {categories.map(category => (

@@ -3,11 +3,11 @@ import {useState, useEffect, useRef} from 'react'
 
 type Props = {
   todo: Todo
-  editingId: (number | null)
-  setEditingId: (id: number | null) => void
-  onToggle: (id: number) => void
-  onEdit: (id: number, text: string) => void
-  onDelete: (id: number) => void
+  editingId: (string | null)
+  setEditingId: (id: string | null) => void
+  onToggle: (id: string) => void
+  onEdit: (id: string, text: string) => void
+  onDelete: (id: string) => void
 }
 
 function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: Props) {
@@ -15,7 +15,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
     const [editText, setEditText] = useState<string>("")
     const containerRef = useRef<HTMLDivElement | null>(null)
 
-    const changeEditingId = (id: number) => {
+    const changeEditingId = (id: string) => {
       if (editingId === id) {
         setEditingId(null)
       } else {
