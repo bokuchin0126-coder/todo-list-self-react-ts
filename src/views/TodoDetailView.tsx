@@ -1,4 +1,4 @@
-import type { View, Category, Todo } from '../types'
+import type { View, Category, Todo } from '../components/types'
 import {useState} from 'react'
 
 type Props = {

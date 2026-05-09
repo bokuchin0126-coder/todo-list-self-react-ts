@@ -1,4 +1,4 @@
-import type { Todo } from '../types'
+import type { Todo } from './types'
 import {useState, useEffect, useRef} from 'react'
 
 type Props = {
