@@ -1,4 +1,4 @@
-import type { Todo, Filter, View } from '../types'
+import type { Todo, Filter, View } from '../components/types'
 import TodoItem from '../components/Todoitem'
 import { memo } from "react"
 
