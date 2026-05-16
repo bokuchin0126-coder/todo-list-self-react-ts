@@ -1,15 +1,24 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { Todo } from "../components/types"
+import type { DailyTodo, Todo } from "../components/types"
 
 function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>) {
 
-  const [todos, setTodos] = useState<Todo[]>(() => {
+  const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
     const saved = localStorage.getItem("todos")
     return saved ? JSON.parse(saved) : []
   })
   const [inputText, setInputText] = useState<string>("")
   const [selectCategoryId, setSelectCategoryId] = useState<string>("")
+
+  const today = new Intl.DateTimeFormat("ja-JP", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date())
+
+  const todayDate = dailyTodos.find(day => day.date === today)
 
   const handleAddTodos = async () => {
     if (inputText.trim() === "") return 
@@ -36,7 +45,25 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
         categoryId: selectCategoryId
       }
 
-      setTodos(prev => [...prev, newTodo])
+      if (todayDate) {
+        setDailyTodos(prev => prev.map(day => {
+          if (day.date !== today) {
+            return day
+          }
+          return {
+            ...day,
+            todos: [...day.todos, newTodo]
+          }
+        }))
+      } else {
+        setDailyTodos(prev => [
+          ...prev,
+          {
+            date: today,
+            todos: [newTodo]
+          }
+        ])
+      }
     
       setInputText("")
 
@@ -56,7 +83,15 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
       await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: "DELETE"
       })
-      setTodos(prev => prev.filter(todo => todo.id !== id))
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.filter(todo => todo.id !== id)
+        }
+      }))
 
     } catch {
       setError("データの消去に失敗しました")
@@ -71,7 +106,8 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
     setLoading(true)
 
     try {
-      const target = todos.find(t => t.id === id)
+      if (!todayDate) return
+      const target = todayDate.todos.find(t => t.id === id)
       if (!target) return
 
       const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
@@ -85,17 +121,17 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
       })
       const date = await res.json()
 
-      const updateTodo: Todo = {
-        id: id,
-        text: date.title ?? target.text,
-        status: date.completed ? "completed" : "active",
-        categoryId: target.categoryId
+     setDailyTodos(prev => prev.map(day => {
+      if (day.date !== today) {
+        return day
       }
-     setTodos((prev: Todo[]) => prev.map(todo => (
-        todo.id === id ? updateTodo : todo
-      )))
-    
-
+      return {
+        ...day,
+        todos: day.todos.map(todo => 
+          todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} 
+          : todo)
+      }
+     }))
     } catch {
       setError("データの更新に失敗しました")
     } finally {
@@ -104,18 +140,46 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
     }
   }
 
-  const handleEditTodos = (id: string, text: string) => {
+  const handleEditTodos = async (id: string, text: string) => {
     if (text.trim() === "" ) return 
-    setTodos((prev) => prev.map(todo => (
-      todo.id === id ? {...todo, text: text, isEditing: false} : todo
-    )))
+    try {
+      setLoading(true)
+      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type" : "application/json"
+        },
+        body: JSON.stringify({
+          title: text
+        })
+      })
+      const date = await res.json()
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.map(todo => (
+            todo.id === id ? {...todo, text: date.title} : todo
+          ))
+        }
+      }))
+    } catch {
+      setError("編集に失敗しました")
+    } finally {
+      setError(null)
+      setLoading(false)
+    }
   }
 
   return {
-    todos,
+    dailyTodos,
     inputText,
     selectCategoryId,
-    setTodos,
+    today,
+    todayDate,
+    setDailyTodos,
     setInputText,
     setSelectCategoryId,
     handleAddTodos,

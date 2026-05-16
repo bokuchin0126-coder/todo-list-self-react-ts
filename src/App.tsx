@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Filter, View } from './components/types'
+import type { Filter, View, DailyTodo, Todo } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
 import useInitializeApp from "./hooks/useInitializeApp"
@@ -18,10 +18,12 @@ function App() {
 
   const stateTodos = useTodos(loading, setError, setLoading)
   const {
-    todos,
+    dailyTodos,
     inputText,
     selectCategoryId,
-    setTodos,
+    today,
+    todayDate,
+    setDailyTodos,
     setInputText,
     setSelectCategoryId,
     handleAddTodos,
@@ -30,7 +32,7 @@ function App() {
     handleDeleteTodos
   } = stateTodos
 
-  const stateCategories = useCategories(setTodos)
+  const stateCategories = useCategories(setDailyTodos, today)
   const {
     categories,
     categoryText,
@@ -39,14 +41,15 @@ function App() {
     handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(todos, categories, setTodos, setError, setLoading, setEditingId)
+  const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, today, setEditingId)
 
   function search() {
-    return todos.filter((todo) => todo.text.toLowerCase().includes(searchText.toLowerCase()))
+    return todayDate?.todos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase())) ?? []
   }
 
   const filteredTodo = () => {
     const searched = search()
+
     if (filter === "all") return searched
     if (filter === "active")  return searched.filter((todo) => todo.status === "active")
     else if (filter === "completed") return searched.filter((todo) => todo.status === "completed")
@@ -54,10 +57,10 @@ function App() {
   }
 
   const categorizeFilter = () => {
-    const list = filteredTodo()
-    if (!selectCategoryId) return list
-    return list.filter((todo) => todo.categoryId === selectCategoryId)
+    const filteredTodos = filteredTodo()
+    return filteredTodos.filter((todo) => todo.categoryId === selectCategoryId)
   }
+  const visibleTodos = categorizeFilter()
 
   
 
@@ -67,12 +70,13 @@ function App() {
         {view === "detail" ?
           <TodoDetailView
             view={view}
-            todos={todos}
+            dailyTodos={dailyTodos}
             setView={setView}
             selectCategoryId={selectCategoryId}
             categories={categories}
             error={error}
             loading={loading}
+            todayDate={todayDate}
             categoryText={categoryText}
             setSelectCategoryId={setSelectCategoryId}
             setCategoryText={setCategoryText}
@@ -80,7 +84,7 @@ function App() {
             onDeleteCategory={handleDeleteCategories}
           />:
           <TodoListView
-            todos={todos}
+            visibleTodos={visibleTodos}
             view={view}
             setView={setView}
             filter={filter}
@@ -93,8 +97,7 @@ function App() {
             setInputText={setInputText}
             setSearchText={setSearchText}
             setEditingId={setEditingId}
-            filteredTodo={filteredTodo}
-            categorizeFilter={categorizeFilter}
+            todayDate={todayDate}
             onAddTodos={handleAddTodos}
             onToggle={handleToggleTodos}
             onEdit={handleEditTodos}

@@ -1,9 +1,9 @@
-import type { Todo, Filter, View } from '../components/types'
+import type { DailyTodo, Filter, View, Todo } from '../components/types'
 import TodoItem from '../components/Todoitem'
 import { memo } from "react"
 
 type Props = {
-  todos: Todo[]
+  visibleTodos: Todo[]
   view: View
   filter: Filter
   inputText: string
@@ -16,16 +16,15 @@ type Props = {
   setFilter: (filter: Filter) => void
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
-  filteredTodo: () => Todo[]
-  categorizeFilter: () => Todo[]
+  todayDate?: DailyTodo
   onAddTodos: () => void
   onToggle: (id: string) => void
   onEdit: (id: string, text: string) => void
   onDelete: (id: string) => void
 }
 
-function TodoListView({todos, filter, view, inputText, error, loading, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
-  setSearchText, filteredTodo, categorizeFilter, onAddTodos, onToggle, onEdit, onDelete}:Props) {
+function TodoListView({visibleTodos, filter, view, inputText, error, loading, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
+  todayDate, setSearchText, onAddTodos, onToggle, onEdit, onDelete}:Props) {
 
   
   return (
@@ -56,12 +55,12 @@ function TodoListView({todos, filter, view, inputText, error, loading, searchTex
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("completed")}>達成</button>
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("active")}>未達成</button>
       </div>
-      {todos.length === 0 && <p>タスクがありません</p>} 
+      {todayDate?.todos.length === 0 && <p>タスクがありません</p>} 
       {loading && <p>ローディング中...</p>}
       {error && <p>{error}</p>}
       
       <div>
-        {categorizeFilter().map((todo) => (
+        {visibleTodos.map((todo) => (
         <TodoItem
           key={todo.id}
           todo={todo}

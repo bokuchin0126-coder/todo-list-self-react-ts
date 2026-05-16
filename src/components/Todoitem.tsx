@@ -30,6 +30,7 @@ function TodoItem({ todo, editingId, setEditingId, onToggle, onEdit, onDelete }:
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 onEdit(todo.id, editText)
+                setEditingId(null)
               }
             }} />
           ) : 

@@ -1,30 +1,37 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { Todo, Category, ApiTodo } from "../components/types"
+import type { DailyTodo, Category, ApiTodo, Todo } from "../components/types"
 
-function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispatch<SetStateAction<Todo[]>>, 
-    setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, setEditingId: Dispatch<SetStateAction<string | null>>) {
+function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, 
+    setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, today: string,
+    setEditingId: Dispatch<SetStateAction<string | null>>) {
 
   useEffect(() => {
     const saved = localStorage.getItem("todos")
+    setLoading(true)
     if (saved) {
-      setTodos(JSON.parse(saved))
+      setDailyTodos(JSON.parse(saved))
       setLoading(false)
       return 
     }
     const fetchDate = async () => {
       try {
         const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
-        const date = await (res).json()
+        const date: ApiTodo[] = await res.json()
 
-        const converted = date.map((item: ApiTodo) => ({
+        const converted: Todo[] = date.map((item: ApiTodo) => ({
           id: item.id.toString(),
           text: item.title,
           status: item.completed ? "completed" : "active",
-          categoryId: null
+          categoryId: ""
         }))
 
-        setTodos(converted)
+        setDailyTodos([
+          {
+            date: today,
+            todos: converted
+          }
+        ])
       } catch {
         setError("データの取得に失敗しました")
       } finally {
@@ -36,8 +43,8 @@ function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispa
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos))
-  }, [todos])
+    localStorage.setItem("todos", JSON.stringify(dailyTodos))
+  }, [dailyTodos])
 
   useEffect(() => {
     localStorage.setItem("categories", JSON.stringify(categories))

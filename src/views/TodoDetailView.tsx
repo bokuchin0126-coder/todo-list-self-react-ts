@@ -1,27 +1,28 @@
-import type { View, Todo, Category } from '../components/types' 
+import type { View, DailyTodo, Category } from '../components/types' 
 import { useState } from 'react'
 
 type Props = {
   view: View
-  todos: Todo[]
+  dailyTodos: DailyTodo[]
   setView: (view: View) => void
   selectCategoryId: string
   categories: Category[]
   categoryText: string
   error: string | null
   loading: true | false
+  todayDate?: DailyTodo
   setSelectCategoryId: (id: string) => void
   setCategoryText: (text: string) => void
   onAddCategories: () => void
   onDeleteCategory: (id: string) => void
 }
 
-function TodoDetailView ({view, todos, setView, selectCategoryId, categories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
-  onAddCategories, onDeleteCategory}: Props) {
+function TodoDetailView ({view, dailyTodos, setView, selectCategoryId, categories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
+  onAddCategories, onDeleteCategory, todayDate}: Props) {
 
 
   const categoryTodo = (categoryId: string) => {
-    const category = todos.filter((todo) => todo.categoryId === categoryId)
+    const category = todayDate?.todos.filter((todo) => todo.categoryId === categoryId) ?? []
     const completed = category.filter((category) => category.status === "completed")
     return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
   }

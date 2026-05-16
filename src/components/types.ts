@@ -5,6 +5,11 @@ export type Todo = {
     categoryId: string
 }
 
+export type DailyTodo = {
+    date: string
+    todos: Todo[]
+}
+
 export type Category = {
     id: string
     name: string
