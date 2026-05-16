@@ -1,8 +1,8 @@
 import TodoItem from '../components/Todoitem'
-import type { Todo, Filter, View } from '../components/types'
+import type { Todo, Filter, View, DailyTodo } from '../components/types'
 
 type Props = {
-  todos: Todo[]
+  dailyTodos: DailyTodo[]
   inputText: string
   searchText: string
   filter: Filter
@@ -22,7 +22,7 @@ type Props = {
   onDelete: (id: string) => void
 }
 
-function TodoListView ({todos, inputText, searchText, filter, editingId, categoriesTodos, error, loading, setInputText, setSearchText, setFilter, setEditingId,
+function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, categoriesTodos, error, loading, setInputText, setSearchText, setFilter, setEditingId,
   setView, searchFilter, onAddTodos, onToggle, onEdit, onDelete}: Props) {
 
   return (

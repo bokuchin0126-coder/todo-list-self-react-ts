@@ -15,14 +15,12 @@ function useInitializeApp(todos: Todo[], categories: Category[], selectCategoryI
 
   useEffect(() => {
     const saved = localStorage.getItem("todos")
-    console.log(saved)
     if (saved && JSON.parse(saved).length > 0) {
       setTodos(JSON.parse(saved))
       setLoading(false)
       return
     }
     setLoading(true)
-    console.log("最初")
 
     async function ApiTodo() {
       try {
@@ -36,10 +34,8 @@ function useInitializeApp(todos: Todo[], categories: Category[], selectCategoryI
           categoryId: selectCategoryId
         }))
         setTodos(conversion)
-        console.log(date)
       } catch(e) {
         setError("データの取得に失敗しました")
-        console.log(e)
       } finally {
         setLoading(false)
       }

@@ -1,10 +1,11 @@
-import type { View, Category, Todo } from '../components/types'
+import type { View, Category, Todo, DailyTodo } from '../components/types'
 import {useState} from 'react'
 
 type Props = {
     view: View
-    todos: Todo[]
+    dailyTodos: DailyTodo[]
     categories: Category[]
+    todayTodos: Todo[]
     error: string | null
     loading: boolean
     selectCategoryId: string
@@ -13,15 +14,16 @@ type Props = {
     setSelectCategoryId: (id: string) => void
     categoriesTodos: Todo[]
     onAddCategories: (text: string) => void
+    onDeleteCategories: (id: string) => void
 }
 
-function TodoDetailView ({view, todos, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
-  error, loading, onAddCategories}: Props) {
+function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
+  error, loading, onAddCategories, onDeleteCategories, todayTodos}: Props) {
 
     const [inputText, setInputText] = useState<string>("")
 
     const categoryTodo = (categoryId: string) => {
-      const category = todos.filter((todo) => todo.categoryId === categoryId)
+      const category = todayTodos.filter((todo) => todo.categoryId === categoryId)
       const completed = category.filter((category) => category.status === "completed")
       return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
     }
@@ -56,7 +58,8 @@ function TodoDetailView ({view, todos, categories, selectCategoryId, setView, se
                     setInputText("")}}>
                       ▽
                 </button>
-                <p>達成率{categoryTodo(category.id)}</p>
+                <button onClick={() => onDeleteCategories(category.id)}>消去</button>
+                <p>達成率{categoryTodo(category.id)}%</p>
               </div>
             ))}
           </div>

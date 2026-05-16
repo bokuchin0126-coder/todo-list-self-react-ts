@@ -16,12 +16,15 @@ function App() {
 
   const stateTodos = useTodos(setError, setLoading)
   const {
-    todos,
+    dailyTodos,
+    today,
+    todayDate,
+    todayTodos,
     editingId,
     inputText,
     searchText,
     selectCategoryId,
-    setTodos,
+    setDailyTodos,
     setEditingId,
     setInputText,
     setSearchText,
@@ -32,16 +35,17 @@ function App() {
     handleDeleteTodos
   } = stateTodos
 
-  const stateCategories = useCategories()
+  const stateCategories = useCategories(setDailyTodos, today)
   const {
     categories,
     setCategories,
-    handleAddCategories
+    handleAddCategories,
+    handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(todos, categories, selectCategoryId, setError, setLoading, setTodos)
+  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos)
 
-  const filteredTodos = todos.filter((todo) => {
+  const filteredTodos = todayTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
     if (filter === "completed") return todo.status === "completed"
     return true
@@ -58,7 +62,7 @@ function App() {
       {view === "detail" ? 
         <TodoDetailView
           view={view}
-          todos={todos}
+          dailyTodos={dailyTodos}
           categories={categories}
           error={error}
           loading={loading}
@@ -68,10 +72,12 @@ function App() {
           setSelectCategoryId={setSelectCategoryId}
           categoriesTodos={categoriesTodos}
           onAddCategories={handleAddCategories}
+          onDeleteCategories={handleDeleteCategories}
         />
       :
         <TodoListView
-          todos={todos}
+          dailyTodos={dailyTodos}
+          todayTodos={todayTodos}
           inputText={inputText}
           searchText={searchText}
           filter={filter}
