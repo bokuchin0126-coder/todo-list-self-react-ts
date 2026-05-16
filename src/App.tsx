@@ -43,7 +43,7 @@ function App() {
     handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos)
+  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos, today)
 
   const filteredTodos = todayTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
@@ -63,6 +63,7 @@ function App() {
         <TodoDetailView
           view={view}
           dailyTodos={dailyTodos}
+          todayTodos={todayTodos}
           categories={categories}
           error={error}
           loading={loading}
@@ -77,7 +78,6 @@ function App() {
       :
         <TodoListView
           dailyTodos={dailyTodos}
-          todayTodos={todayTodos}
           inputText={inputText}
           searchText={searchText}
           filter={filter}
