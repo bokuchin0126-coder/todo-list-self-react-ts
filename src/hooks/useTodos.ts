@@ -19,6 +19,7 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
   }).format(new Date())
 
   const todayDate = dailyTodos.find(day => day.date === today)
+  const todayTodos = todayDate?.todos ?? []
 
   const handleAddTodos = async () => {
     if (inputText.trim() === "") return 
@@ -107,7 +108,7 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
 
     try {
       if (!todayDate) return
-      const target = todayDate.todos.find(t => t.id === id)
+      const target = todayTodos.find(t => t.id === id)
       if (!target) return
 
       const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
@@ -179,6 +180,7 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
     selectCategoryId,
     today,
     todayDate,
+    todayTodos,
     setDailyTodos,
     setInputText,
     setSelectCategoryId,

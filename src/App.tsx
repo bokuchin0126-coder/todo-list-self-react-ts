@@ -23,6 +23,7 @@ function App() {
     selectCategoryId,
     today,
     todayDate,
+    todayTodos,
     setDailyTodos,
     setInputText,
     setSelectCategoryId,
@@ -44,7 +45,7 @@ function App() {
   const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, today, setEditingId)
 
   function search() {
-    return todayDate?.todos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase())) ?? []
+    return todayTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))
   }
 
   const filteredTodo = () => {
@@ -71,6 +72,7 @@ function App() {
           <TodoDetailView
             view={view}
             dailyTodos={dailyTodos}
+            todayTodos={todayTodos}
             setView={setView}
             selectCategoryId={selectCategoryId}
             categories={categories}

@@ -24,7 +24,7 @@ function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, tod
       }
       return {
         ...day,
-        todos: day.todos.filter(todo => todo.categoryId === id)
+        todos: day.todos.filter(todo => todo.categoryId !== id)
       }
     }))
   } 
