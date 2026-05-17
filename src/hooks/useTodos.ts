@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, Todo, Filter } from "../components/types"
+import type { DailyTodo, Todo } from "../components/types"
 
 function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>) {
   const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
@@ -40,7 +40,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
       
       const newTodo: Todo = {
         id: crypto.randomUUID(),
-        text: text,
+        text: date.title,
         status: "active",
         categoryId: selectCategoryId
       }
@@ -123,7 +123,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
         return {
           ...day,
           todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, text: text} : todo
+            todo.id === id ? {...todo, text: date.title} : todo
           ))
         }
       }))
@@ -144,8 +144,6 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
       const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: "DELETE"})
 
-      const date = await res.json()
-
       setDailyTodos(prev => prev.map(day => {
         if (day.date !== today) {
           return day
@@ -165,7 +163,6 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
   return {
     dailyTodos,
     today,
-    todayDate,
     todayTodos,
     inputText,
     editingId,

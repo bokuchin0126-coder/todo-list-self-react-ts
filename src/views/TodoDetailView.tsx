@@ -30,8 +30,9 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, setVie
     
     return (
       <>
-        <div>
+        <div className="category-list">
             <input
+              className="input-area"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="カテゴリーを追加..."
@@ -49,7 +50,7 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, setVie
 
           <div>
             {categories.map(category => (
-              <div key={category.id}>
+              <div className="category-item" key={category.id}>
                 <p>{category.name}</p>
                 <button
                   onClick={() => {

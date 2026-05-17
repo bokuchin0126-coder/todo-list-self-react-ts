@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import type { Todo, Filter, View, Category, ApiTodo } from './components/types'
+import { useState } from 'react'
+import type { Filter, View } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
 import useInitializeApp from "./hooks/useInitializeApp"
@@ -18,7 +18,6 @@ function App() {
   const {
     dailyTodos,
     today,
-    todayDate,
     todayTodos,
     editingId,
     inputText,
@@ -59,44 +58,46 @@ function App() {
 
   return (
     <>
-      {view === "detail" ? 
-        <TodoDetailView
-          view={view}
-          dailyTodos={dailyTodos}
-          todayTodos={todayTodos}
-          categories={categories}
-          error={error}
-          loading={loading}
-          selectCategoryId={selectCategoryId}
-          setView={setView}
-          setCategories={setCategories}
-          setSelectCategoryId={setSelectCategoryId}
-          categoriesTodos={categoriesTodos}
-          onAddCategories={handleAddCategories}
-          onDeleteCategories={handleDeleteCategories}
-        />
-      :
-        <TodoListView
-          dailyTodos={dailyTodos}
-          inputText={inputText}
-          searchText={searchText}
-          filter={filter}
-          editingId={editingId}
-          categoriesTodos={categoriesTodos}
-          error={error}
-          loading={loading}
-          setInputText={setInputText}
-          setSearchText={setSearchText}
-          setFilter={setFilter}
-          setEditingId={setEditingId}
-          setView={setView}
-          searchFilter={searchFilter}
-          onAddTodos={handleAddTodos}
-          onToggle={handleToggleTodos}
-          onEdit={handleEditTodos}
-          onDelete={handleDeleteTodos}
-        />
-      }
+      <div className="app">
+        {view === "detail" ? 
+          <TodoDetailView
+            view={view}
+            dailyTodos={dailyTodos}
+            todayTodos={todayTodos}
+            categories={categories}
+            error={error}
+            loading={loading}
+            selectCategoryId={selectCategoryId}
+            setView={setView}
+            setCategories={setCategories}
+            setSelectCategoryId={setSelectCategoryId}
+            categoriesTodos={categoriesTodos}
+            onAddCategories={handleAddCategories}
+            onDeleteCategories={handleDeleteCategories}
+          />
+        :
+          <TodoListView
+            dailyTodos={dailyTodos}
+            inputText={inputText}
+            searchText={searchText}
+            filter={filter}
+            editingId={editingId}
+            categoriesTodos={categoriesTodos}
+            error={error}
+            loading={loading}
+            setInputText={setInputText}
+            setSearchText={setSearchText}
+            setFilter={setFilter}
+            setEditingId={setEditingId}
+            setView={setView}
+            searchFilter={searchFilter}
+            onAddTodos={handleAddTodos}
+            onToggle={handleToggleTodos}
+            onEdit={handleEditTodos}
+            onDelete={handleDeleteTodos}
+          />
+        }
+      </div>
     </>
   )
 }

@@ -49,10 +49,11 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
     return (
       <>
         <div ref={containerRef}>
-          <button onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
+          <button className="completed" onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
 
           {editingId === todo.id ? (
               <input
+                className="input-area"
                 value={editText}
                 autoFocus
                 onChange={(e) => setEditText(e.target.value)}
@@ -64,7 +65,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
                 }}
               />
             ): (
-            <span>{todo.text}</span>
+            <span className="todo-text">{todo.text}</span>
           )}
 
           {editingId !== todo.id && (

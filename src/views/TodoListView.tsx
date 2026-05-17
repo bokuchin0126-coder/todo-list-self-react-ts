@@ -27,9 +27,10 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
 
   return (
     <>
-      <div>
+      <div className="todo-container">
         <div>
           <input
+            className="input-area"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="検索..."
@@ -38,6 +39,7 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
         </div>
         <div>
             <input
+                className="input-area"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="リストを追加..."
@@ -48,24 +50,26 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
                 }}/>
             <button onClick={() => onAddTodos(inputText)}>追加</button>
         </div>
-        <div>
+        <div className="filter-buttons">
             <button onClick={() => setFilter("all")}>全て</button>
             <button onClick={() => setFilter("active")}>未達成</button>
             <button onClick={() => setFilter("completed")}>達成</button>
         </div>
         {error && <p>{error}</p>}
         {loading && <p>ローディング中...</p>}
-        {searchFilter.map(todo => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            editingId={editingId}
-            setEditingId={setEditingId}
-            onToggle={onToggle}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ))}
+        <div className="todo-item">
+          {searchFilter.map(todo => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              editingId={editingId}
+              setEditingId={setEditingId}
+              onToggle={onToggle}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
         <button onClick={() => setView("detail")}>戻る</button>
       </div>
     </>
