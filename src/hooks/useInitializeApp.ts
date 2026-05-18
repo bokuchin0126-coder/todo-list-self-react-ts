@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, Todo, ApiTodo, Category } from "../components/types"
+import type { DailyTodo, ApiTodo, Category } from "../components/types"
 
 function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], selectCategoryId: string, setError: Dispatch<SetStateAction<string | null>>, 
-  setLoading: Dispatch<SetStateAction<boolean>>, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, today: string) {
+  setLoading: Dispatch<SetStateAction<boolean>>, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, selectedDate: string) {
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(dailyTodos))
@@ -20,7 +20,7 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], selec
 
     const parsed = JSON.parse(saved)
     const hasToday = parsed.some(
-      (day: DailyTodo) => day.date === today
+      (day: DailyTodo) => day.date === selectedDate
     )
     
     if (!hasToday) {
@@ -35,7 +35,7 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], selec
             status: item.completed ? "completed" : "active",
             categoryId: selectCategoryId
           }))
-          setDailyTodos([...parsed, {date: today, todos: conversion}])
+          setDailyTodos([...parsed, {date: selectedDate, todos: conversion}])
         } catch(e) {
           setError("データの取得に失敗しました")
         } finally {
@@ -44,11 +44,10 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], selec
       }
       ApiTodo()
     } else if (hasToday) {
-      setDailyTodos(parsed)
       setLoading(false)
       return
     } 
-  }, [])
+  }, [selectedDate])
 
 }
 

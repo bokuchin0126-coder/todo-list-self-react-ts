@@ -5,9 +5,10 @@ type Props = {
     view: View
     dailyTodos: DailyTodo[]
     categories: Category[]
-    todayTodos: Todo[]
+    currentTodos: Todo[]
     error: string | null
     loading: boolean
+    selectedDate: string
     selectCategoryId: string
     setView: (view: View) => void
     setCategories: (categories: Category[]) => void
@@ -15,15 +16,16 @@ type Props = {
     categoriesTodos: Todo[]
     onAddCategories: (text: string) => void
     onDeleteCategories: (id: string) => void
+    onChangeDate: (number: number) => void
 }
 
-function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, setView, setCategories, setSelectCategoryId, categoriesTodos, 
-  error, loading, onAddCategories, onDeleteCategories, todayTodos}: Props) {
+function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, selectedDate, setView, setCategories, setSelectCategoryId, categoriesTodos, 
+  error, loading, onAddCategories, onDeleteCategories, currentTodos, onChangeDate}: Props) {
 
     const [inputText, setInputText] = useState<string>("")
 
     const categoryTodo = (categoryId: string) => {
-      const category = todayTodos.filter((todo) => todo.categoryId === categoryId)
+      const category = currentTodos.filter((todo) => todo.categoryId === categoryId)
       const completed = category.filter((category) => category.status === "completed")
       return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
     }
@@ -31,6 +33,11 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, setVie
     return (
       <>
         <div className="category-list">
+          <div>
+            <button onClick={() => onChangeDate(-1)}>←</button>
+            <p>{selectedDate}</p>
+            <button onClick={() => onChangeDate(1)}>→</button>
+          </div>
             <input
               className="input-area"
               value={inputText}

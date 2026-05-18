@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { Category, Filter, DailyTodo } from "../components/types"
+import type { Category, DailyTodo } from "../components/types"
 
 function useCategories(setDailyTodos: React.Dispatch<React.SetStateAction<DailyTodo[]>>, today: string ) {
   const [categories, setCategories] = useState<Category[]>(() => {

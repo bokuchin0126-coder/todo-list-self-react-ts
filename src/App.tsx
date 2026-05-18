@@ -17,8 +17,8 @@ function App() {
   const stateTodos = useTodos(setError, setLoading)
   const {
     dailyTodos,
-    today,
-    todayTodos,
+    selectedDate,
+    currentTodos,
     editingId,
     inputText,
     searchText,
@@ -31,10 +31,11 @@ function App() {
     handleAddTodos,
     handleToggleTodos,
     handleEditTodos,
-    handleDeleteTodos
+    handleDeleteTodos,
+    changeDate
   } = stateTodos
 
-  const stateCategories = useCategories(setDailyTodos, today)
+  const stateCategories = useCategories(setDailyTodos, selectedDate)
   const {
     categories,
     setCategories,
@@ -42,9 +43,9 @@ function App() {
     handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos, today)
+  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos, selectedDate)
 
-  const filteredTodos = todayTodos.filter((todo) => {
+  const filteredTodos = currentTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
     if (filter === "completed") return todo.status === "completed"
     return true
@@ -63,10 +64,11 @@ function App() {
           <TodoDetailView
             view={view}
             dailyTodos={dailyTodos}
-            todayTodos={todayTodos}
+            currentTodos={currentTodos}
             categories={categories}
             error={error}
             loading={loading}
+            selectedDate={selectedDate}
             selectCategoryId={selectCategoryId}
             setView={setView}
             setCategories={setCategories}
@@ -74,6 +76,7 @@ function App() {
             categoriesTodos={categoriesTodos}
             onAddCategories={handleAddCategories}
             onDeleteCategories={handleDeleteCategories}
+            onChangeDate={changeDate}
           />
         :
           <TodoListView
