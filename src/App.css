@@ -1,5 +1,5 @@
 .app {
-    max-width: 700px;
+    max-width: 800px;
     margin: 40px auto;
     padding: 24px;
 }
@@ -26,7 +26,7 @@ input {
 }
 
 button {
-    padding: 10px 16px;
+    padding: 8px 16px;
     border: none;
     border-radius: 8px;
     background: #646cff;
@@ -39,12 +39,28 @@ button:hover {
     opacity: 0.8;
 }
 
-.todo-item {
+.app-button {
+    padding: 12px 20px;
+    font-weight: bold;
+}
+
+.category-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.detail-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.todo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .todo-text {
@@ -70,7 +86,18 @@ button:hover {
 }
 
 .category-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     padding: 6px 12px;
     background: #f3f3f3;
     border-radius: 999px;
+    width: 220px;
+}
+
+.date-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
 }

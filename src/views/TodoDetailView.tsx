@@ -33,7 +33,7 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, select
     return (
       <>
         <div className="category-list">
-          <div>
+          <div className="date-control">
             <button onClick={() => onChangeDate(-1)}>←</button>
             <p>{selectedDate}</p>
             <button onClick={() => onChangeDate(1)}>→</button>
@@ -55,18 +55,20 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, select
         {error && <p>{error}</p>}
         {loading && <p>ローディング中...</p>}
 
-          <div>
+          <div className="detail-header">
             {categories.map(category => (
               <div className="category-item" key={category.id}>
                 <p>{category.name}</p>
-                <button
-                  onClick={() => {
-                    setSelectCategoryId(category.id)
-                    setView("list")
-                    setInputText("")}}>
-                      ▽
-                </button>
-                <button onClick={() => onDeleteCategories(category.id)}>消去</button>
+                <div className="category-buttons">
+                  <button
+                    onClick={() => {
+                      setSelectCategoryId(category.id)
+                      setView("list")
+                      setInputText("")}}>
+                        ▽
+                  </button>
+                  <button onClick={() => onDeleteCategories(category.id)}>消去</button>
+                </div>
                 <p>達成率{categoryTodo(category.id)}%</p>
               </div>
             ))}

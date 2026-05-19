@@ -48,7 +48,7 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
                     onAddTodos(inputText)
                 }
                 }}/>
-            <button onClick={() => onAddTodos(inputText)}>追加</button>
+            <button className="app-button" onClick={() => onAddTodos(inputText)}>追加</button>
         </div>
         <div className="filter-buttons">
             <button onClick={() => setFilter("all")}>全て</button>
