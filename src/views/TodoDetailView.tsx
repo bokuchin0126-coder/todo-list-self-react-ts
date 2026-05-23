@@ -58,18 +58,24 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, select
           <div className="detail-header">
             {categories.map(category => (
               <div className="category-item" key={category.id}>
-                <p>{category.name}</p>
+
+                <div className="category-left">
+                  <p className="category-name">{category.name}</p>
+                  <p className="category-progress">達成率{categoryTodo(category.id)}%</p>
+                </div>
+
                 <div className="category-buttons">
                   <button
+                    className="opan-button"
                     onClick={() => {
                       setSelectCategoryId(category.id)
                       setView("list")
                       setInputText("")}}>
                         ▽
                   </button>
-                  <button onClick={() => onDeleteCategories(category.id)}>消去</button>
+                  <button className="delete-button" onClick={() => onDeleteCategories(category.id)}>消去</button>
                 </div>
-                <p>達成率{categoryTodo(category.id)}%</p>
+                
               </div>
             ))}
           </div>

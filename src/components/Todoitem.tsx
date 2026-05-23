@@ -48,39 +48,43 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
 
     return (
       <>
-        <div ref={containerRef}>
-          <button className="completed" onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
+        <div className="todo-item" ref={containerRef}>
+          <div className="todo-main">
+            <button className="completed" onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
 
-          {editingId === todo.id ? (
-              <input
-                className="input-area"
-                value={editText}
-                autoFocus
-                onChange={(e) => setEditText(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        onEdit(todo.id, editText)
-                        setEditingId(null)
-                    }
-                }}
-              />
-            ): (
-            <span className="todo-text">{todo.text}</span>
-          )}
+            {editingId === todo.id ? (
+                <input
+                  className="input-area"
+                  value={editText}
+                  autoFocus
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                          onEdit(todo.id, editText)
+                          setEditingId(null)
+                      }
+                  }}
+                />
+              ): (
+              <span className="todo-text">{todo.text}</span>
+            )}
+          </div>
 
-          {editingId !== todo.id && (
-          <button onClick={() => changeEditingId(todo.id)}>編集</button>
-          )}
+          <div className="todo-actions">
+            {editingId !== todo.id && (
+              <button onClick={() => changeEditingId(todo.id)}>編集</button>
+            )}
 
-          {editingId === todo.id && (
-          <button onClick={() => {
-            onEdit(todo.id, editText) 
-            setEditingId(null)
-            }}>
-              保存
-          </button>
-          )}
-          <button onClick={() => onDelete(todo.id)}>消去</button>
+            {editingId === todo.id && (
+              <button onClick={() => {
+                onEdit(todo.id, editText) 
+                setEditingId(null)
+              }}>
+                保存
+            </button>
+            )}
+            <button onClick={() => onDelete(todo.id)}>消去</button>
+          </div>
         </div>
       </>
     )

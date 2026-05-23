@@ -57,7 +57,6 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
         </div>
         {error && <p>{error}</p>}
         {loading && <p>ローディング中...</p>}
-        <div className="todo-item">
           {searchFilter.map(todo => (
             <TodoItem
               key={todo.id}
@@ -71,7 +70,6 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
           ))}
         </div>
         <button onClick={() => setView("detail")}>戻る</button>
-      </div>
     </>
   )
 }
