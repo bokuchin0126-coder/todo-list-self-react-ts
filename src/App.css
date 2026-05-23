@@ -70,3 +70,7 @@ input {
     padding: 6px;
     flex: 1;
 }
+
+.date-control {
+    display: flex;
+}

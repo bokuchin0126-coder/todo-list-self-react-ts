@@ -4,32 +4,38 @@ import { useState } from 'react'
 type Props = {
   view: View
   dailyTodos: DailyTodo[]
-  todayTodos: Todo[]
+  currentTodos: Todo[]
   setView: (view: View) => void
   selectCategoryId: string
+  selectedDate: string
   categories: Category[]
   categoryText: string
   error: string | null
   loading: true | false
-  todayDate?: DailyTodo
   setSelectCategoryId: (id: string) => void
   setCategoryText: (text: string) => void
   onAddCategories: () => void
   onDeleteCategory: (id: string) => void
+  onChangeDate: (number: number) => void
 }
 
-function TodoDetailView ({view, dailyTodos, todayTodos, setView, selectCategoryId, categories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
-  onAddCategories, onDeleteCategory, todayDate}: Props) {
+function TodoDetailView ({view, dailyTodos, currentTodos, setView, selectedDate, selectCategoryId, categories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
+  onAddCategories, onDeleteCategory, onChangeDate}: Props) {
 
 
   const categoryTodo = (categoryId: string) => {
-    const category = todayTodos.filter((todo) => todo.categoryId === categoryId) ?? []
+    const category = currentTodos.filter((todo) => todo.categoryId === categoryId) ?? []
     const completed = category.filter((category) => category.status === "completed")
     return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
   }
   
   return (
     <>
+      <div className="date-control">
+        <button onClick={() => onChangeDate(-1)}>←</button>
+        <p>{selectedDate}</p>
+        <button onClick={() => onChangeDate(1)}>→</button>
+      </div>
       <div>
         <input
           value={categoryText}

@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from "react"
 import type { DailyTodo, Category, ApiTodo, Todo } from "../components/types"
 
 function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, 
-    setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, today: string,
+    setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string,
     setEditingId: Dispatch<SetStateAction<string | null>>) {
 
   useEffect(() => {
@@ -13,7 +13,7 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDa
     
     const parsed = JSON.parse(saved)
     const hasToday = parsed.some(
-      (day: DailyTodo) => day.date === today
+      (day: DailyTodo) => day.date === selectedDate
     )
   
     if (!hasToday) {
@@ -29,7 +29,7 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDa
             categoryId: ""
           }))
 
-          setDailyTodos([...parsed, {date: today, todos: converted}])
+          setDailyTodos([...parsed, {date: selectedDate, todos: converted}])
         } catch {
           setError("データの取得に失敗しました")
         } finally {

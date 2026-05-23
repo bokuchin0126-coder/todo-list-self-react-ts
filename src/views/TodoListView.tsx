@@ -16,7 +16,7 @@ type Props = {
   setFilter: (filter: Filter) => void
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
-  todayDate?: DailyTodo
+  currentTodos: Todo[]
   onAddTodos: () => void
   onToggle: (id: string) => void
   onEdit: (id: string, text: string) => void
@@ -24,7 +24,7 @@ type Props = {
 }
 
 function TodoListView({visibleTodos, filter, view, inputText, error, loading, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
-  todayDate, setSearchText, onAddTodos, onToggle, onEdit, onDelete}:Props) {
+  currentTodos, setSearchText, onAddTodos, onToggle, onEdit, onDelete}:Props) {
 
   
   return (
@@ -55,7 +55,7 @@ function TodoListView({visibleTodos, filter, view, inputText, error, loading, se
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("completed")}>達成</button>
         <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("active")}>未達成</button>
       </div>
-      {todayDate?.todos.length === 0 && <p>タスクがありません</p>} 
+      {currentTodos.length === 0 && <p>タスクがありません</p>} 
       {loading && <p>ローディング中...</p>}
       {error && <p>{error}</p>}
       

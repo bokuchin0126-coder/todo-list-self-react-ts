@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Filter, View, DailyTodo, Todo } from './components/types'
+import type { Filter, View } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
 import useInitializeApp from "./hooks/useInitializeApp"
@@ -22,18 +22,20 @@ function App() {
     inputText,
     selectCategoryId,
     today,
-    todayDate,
-    todayTodos,
+    currentDate,
+    currentTodos,
+    selectedDate,
     setDailyTodos,
     setInputText,
     setSelectCategoryId,
     handleAddTodos,
     handleToggleTodos,
     handleEditTodos,
-    handleDeleteTodos
+    handleDeleteTodos,
+    changeDate
   } = stateTodos
 
-  const stateCategories = useCategories(setDailyTodos, today)
+  const stateCategories = useCategories(setDailyTodos, selectedDate)
   const {
     categories,
     categoryText,
@@ -42,10 +44,10 @@ function App() {
     handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, today, setEditingId)
+  const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
 
   function search() {
-    return todayTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))
+    return currentTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))
   }
 
   const filteredTodo = () => {
@@ -72,18 +74,19 @@ function App() {
           <TodoDetailView
             view={view}
             dailyTodos={dailyTodos}
-            todayTodos={todayTodos}
+            currentTodos={currentTodos}
             setView={setView}
             selectCategoryId={selectCategoryId}
             categories={categories}
+            selectedDate={selectedDate}
             error={error}
             loading={loading}
-            todayDate={todayDate}
             categoryText={categoryText}
             setSelectCategoryId={setSelectCategoryId}
             setCategoryText={setCategoryText}
             onAddCategories={handleAddCategories}
             onDeleteCategory={handleDeleteCategories}
+            onChangeDate={changeDate}
           />:
           <TodoListView
             visibleTodos={visibleTodos}
@@ -99,7 +102,7 @@ function App() {
             setInputText={setInputText}
             setSearchText={setSearchText}
             setEditingId={setEditingId}
-            todayDate={todayDate}
+            currentTodos={currentTodos}
             onAddTodos={handleAddTodos}
             onToggle={handleToggleTodos}
             onEdit={handleEditTodos}

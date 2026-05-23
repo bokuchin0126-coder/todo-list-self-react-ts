@@ -2,7 +2,7 @@ import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
 import type { DailyTodo, Category } from "../components/types"
 
-function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, today: string) {
+function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, selectedDate: string) {
 
   const [categories, setCategories] = useState<Category[]>(() => {
       const seved = localStorage.getItem("categories")
@@ -19,7 +19,7 @@ function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, tod
   const handleDeleteCategories = (id: string) => {
     setCategories((prev) => prev.filter(category => category.id !== id))
     setDailyTodos(prev => prev.map(day => {
-      if (day.date !== today) {
+      if (day.date !== selectedDate) {
         return day
       }
       return {
