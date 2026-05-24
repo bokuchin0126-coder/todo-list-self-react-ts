@@ -1,24 +1,63 @@
 import { useState } from "react"
-import type { Category, DailyTodo } from "../components/types"
+import type { Category, DailyTodo, DailyCategory } from "../components/types"
 
-function useCategories(setDailyTodos: React.Dispatch<React.SetStateAction<DailyTodo[]>>, today: string ) {
-  const [categories, setCategories] = useState<Category[]>(() => {
+function useCategories(setDailyTodos: React.Dispatch<React.SetStateAction<DailyTodo[]>>, selectedDate: string ) {
+  const [dailyCategories, setDailyCategories] = useState<DailyCategory[]>(() => {
     const saved = localStorage.getItem("categories")
     return saved ? JSON.parse(saved) : []
   })
+  const currentDate = dailyCategories.find(day => day.date === selectedDate)
+  const currentCategories = currentDate?.categories ?? []
 
   const handleAddCategories = (text: string) => {
     if (text.trim() === "") return
-    setCategories((prev) => [...prev, {id: crypto.randomUUID(), name: text}])
+    if (!currentDate) {
+      setDailyCategories(prev => [
+        ...prev,
+        {
+          date: selectedDate,
+          categories: [
+            {
+              id: Date.now().toString(),
+              name: text
+            }
+          ]
+        }
+      ])
+    } else {
+      setDailyCategories(prev => prev.map(day => {
+        if (day.date !== selectedDate) {
+          return day
+        }
+        return {
+          ...day,
+          categories: [
+            ...day.categories,
+            {
+              id: Date.now().toString(),
+              name: text
+            }
+          ]
+        }
+      }))
+    }
   }
 
   const handleDeleteCategories = (id: string) => {
-    const category = categories.filter(category => category.id === id)
+    const category = currentCategories.filter(category => category.id === id)
     if (!category) return 
 
-    setCategories(prev => prev.filter(category => category.id !== id))
+    setDailyCategories(prev => prev.map(day => {
+      if (day.date !== selectedDate) {
+        return day
+      }
+      return {
+        ...day,
+        categories: day.categories.filter(category => category.id !== id)
+      }
+    }))
     setDailyTodos(prev => prev.map(day => {
-      if (day.date !== today) {
+      if (day.date !== selectedDate) {
         return day
       }
       return {
@@ -29,8 +68,9 @@ function useCategories(setDailyTodos: React.Dispatch<React.SetStateAction<DailyT
   }
 
   return {
-    categories,
-    setCategories,
+    dailyCategories,
+    currentCategories,
+    setDailyCategories,
     handleAddCategories,
     handleDeleteCategories
   }

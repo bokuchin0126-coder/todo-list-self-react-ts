@@ -37,13 +37,14 @@ function App() {
 
   const stateCategories = useCategories(setDailyTodos, selectedDate)
   const {
-    categories,
-    setCategories,
+    dailyCategories,
+    setDailyCategories,
+    currentCategories,
     handleAddCategories,
     handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos, selectedDate)
+  const localStorage = useInitializeApp(dailyTodos, dailyCategories, selectCategoryId, setError, setLoading, setDailyTodos, selectedDate)
 
   const filteredTodos = currentTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
@@ -65,13 +66,14 @@ function App() {
             view={view}
             dailyTodos={dailyTodos}
             currentTodos={currentTodos}
-            categories={categories}
+            dailyCategories={dailyCategories}
+            currentCategories={currentCategories}
             error={error}
             loading={loading}
             selectedDate={selectedDate}
             selectCategoryId={selectCategoryId}
             setView={setView}
-            setCategories={setCategories}
+            setDailyCategories={setDailyCategories}
             setSelectCategoryId={setSelectCategoryId}
             categoriesTodos={categoriesTodos}
             onAddCategories={handleAddCategories}

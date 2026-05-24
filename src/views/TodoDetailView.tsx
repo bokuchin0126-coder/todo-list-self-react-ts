@@ -1,17 +1,18 @@
-import type { View, Category, Todo, DailyTodo } from '../components/types'
+import type { View, Category, Todo, DailyTodo, DailyCategory } from '../components/types'
 import {useState} from 'react'
 
 type Props = {
     view: View
     dailyTodos: DailyTodo[]
-    categories: Category[]
+    dailyCategories: DailyCategory[]
     currentTodos: Todo[]
+    currentCategories: Category[]
     error: string | null
     loading: boolean
     selectedDate: string
     selectCategoryId: string
     setView: (view: View) => void
-    setCategories: (categories: Category[]) => void
+    setDailyCategories: (dailyCategories: DailyCategory[]) => void
     setSelectCategoryId: (id: string) => void
     categoriesTodos: Todo[]
     onAddCategories: (text: string) => void
@@ -19,8 +20,8 @@ type Props = {
     onChangeDate: (number: number) => void
 }
 
-function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, selectedDate, setView, setCategories, setSelectCategoryId, categoriesTodos, 
-  error, loading, onAddCategories, onDeleteCategories, currentTodos, onChangeDate}: Props) {
+function TodoDetailView ({view, dailyTodos, dailyCategories, selectCategoryId, selectedDate, setView, setDailyCategories, setSelectCategoryId, categoriesTodos, 
+  error, loading, onAddCategories, onDeleteCategories, currentTodos, currentCategories, onChangeDate}: Props) {
 
     const [inputText, setInputText] = useState<string>("")
 
@@ -56,7 +57,7 @@ function TodoDetailView ({view, dailyTodos, categories, selectCategoryId, select
         {loading && <p>ローディング中...</p>}
 
           <div className="detail-header">
-            {categories.map(category => (
+            {currentCategories.map(category => (
               <div className="category-item" key={category.id}>
 
                 <div className="category-left">
