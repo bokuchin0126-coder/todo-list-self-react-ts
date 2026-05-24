@@ -1,8 +1,8 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, Category, ApiTodo, Todo } from "../components/types"
+import type { DailyTodo, DailyCategory, ApiTodo, Todo } from "../components/types"
 
-function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, 
+function useInitializeApp(dailyTodos: DailyTodo[], dailyCategories: DailyCategory[], setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, 
     setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string,
     setEditingId: Dispatch<SetStateAction<string | null>>) {
 
@@ -48,8 +48,8 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDa
   }, [dailyTodos])
 
   useEffect(() => {
-    localStorage.setItem("categories", JSON.stringify(categories))
-  }, [categories])
+    localStorage.setItem("categories", JSON.stringify(dailyCategories))
+  }, [dailyCategories])
 
   useEffect(() => {
     const handleClick = () => {

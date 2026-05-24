@@ -37,14 +37,15 @@ function App() {
 
   const stateCategories = useCategories(setDailyTodos, selectedDate)
   const {
-    categories,
+    dailyCategories,
     categoryText,
+    currentCategories,
     setCategoryText,
     handleAddCategories,
     handleDeleteCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
+  const localStorage = useInitializeApp(dailyTodos, dailyCategories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
 
   function search() {
     return currentTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))
@@ -75,9 +76,10 @@ function App() {
             view={view}
             dailyTodos={dailyTodos}
             currentTodos={currentTodos}
+            currentCategories={currentCategories}
             setView={setView}
             selectCategoryId={selectCategoryId}
-            categories={categories}
+            dailyCategories={dailyCategories}
             selectedDate={selectedDate}
             error={error}
             loading={loading}

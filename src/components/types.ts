@@ -10,6 +10,11 @@ export type DailyTodo = {
     todos: Todo[]
 }
 
+export type DailyCategory = {
+    date: string
+    categories: Category[]
+}
+
 export type Category = {
     id: string
     name: string

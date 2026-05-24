@@ -1,23 +1,62 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, Category } from "../components/types"
+import type { DailyTodo, DailyCategory } from "../components/types"
 
 function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, selectedDate: string) {
 
-  const [categories, setCategories] = useState<Category[]>(() => {
+  const [dailyCategories, setDailyCategories] = useState<DailyCategory[]>(() => {
       const seved = localStorage.getItem("categories")
       return seved ? JSON.parse(seved) : []
     })
   const [categoryText, setCategoryText] = useState<string>("")
+  const currentDay = dailyCategories.find(day => day.date === selectedDate)
+  const currentCategories = currentDay?.categories ?? []
   
   const handleAddCategories = () => {
     if (categoryText.trim() === "") return
-    setCategories((prev) => [...prev, {id: Date.now().toLocaleString(), name: categoryText}])
+    if (!currentDay) {
+      setDailyCategories(prev => [
+        ...prev,
+        {
+          date: selectedDate,
+          categories: [
+            {
+              id: Date.now().toString(),
+              name: categoryText
+            }
+          ]
+        }
+      ])
+    } else {
+      setDailyCategories(prev => prev.map(day => {
+        if (day.date !== selectedDate) {
+          return day
+        }
+        return {
+          ...day,
+          categories: [
+            ...day.categories,
+            {
+              id: Date.now().toString(),
+              name: categoryText
+            }
+          ]
+        }
+      }))
+    }
     setCategoryText("")
   }
 
   const handleDeleteCategories = (id: string) => {
-    setCategories((prev) => prev.filter(category => category.id !== id))
+    setDailyCategories(prev => prev.map(day => {
+      if (day.date !== selectedDate) {
+        return day
+      }
+      return {
+        ...day,
+        categories: day.categories.filter(category => category.id !== id)
+      }
+    }))
     setDailyTodos(prev => prev.map(day => {
       if (day.date !== selectedDate) {
         return day
@@ -30,8 +69,9 @@ function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, sel
   } 
 
   return {
-    categories,
+    dailyCategories,
     categoryText,
+    currentCategories,
     setCategoryText,
     handleAddCategories,
     handleDeleteCategories

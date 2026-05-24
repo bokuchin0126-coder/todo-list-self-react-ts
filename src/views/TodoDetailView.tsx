@@ -1,14 +1,15 @@
-import type { View, DailyTodo, Category, Todo } from '../components/types' 
+import type { View, DailyTodo, DailyCategory, Todo, Category } from '../components/types' 
 import { useState } from 'react'
 
 type Props = {
   view: View
   dailyTodos: DailyTodo[]
   currentTodos: Todo[]
+  currentCategories: Category[]
   setView: (view: View) => void
   selectCategoryId: string
   selectedDate: string
-  categories: Category[]
+  dailyCategories: DailyCategory[]
   categoryText: string
   error: string | null
   loading: true | false
@@ -19,7 +20,7 @@ type Props = {
   onChangeDate: (number: number) => void
 }
 
-function TodoDetailView ({view, dailyTodos, currentTodos, setView, selectedDate, selectCategoryId, categories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
+function TodoDetailView ({view, dailyTodos, currentTodos, currentCategories, setView, selectedDate, selectCategoryId, dailyCategories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
   onAddCategories, onDeleteCategory, onChangeDate}: Props) {
 
 
@@ -47,10 +48,10 @@ function TodoDetailView ({view, dailyTodos, currentTodos, setView, selectedDate,
             }
           }}
         />
-        <button onClick={() => onAddCategories}>追加</button>
+        <button onClick={onAddCategories}>追加</button>
       </div>
       <div>
-        {categories.map((category) => (
+        {currentCategories.map((category) => (
           <div key={category.id}>
             <button
               onClick={() => {setSelectCategoryId(category.id), setView("list")}}>
