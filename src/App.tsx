@@ -1,16 +1,17 @@
 import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import type { Filter, View } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
 import useInitializeApp from "./hooks/useInitializeApp"
 import TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
+import { AppContext } from "./contexts/AppContext"
 import './App.css'
 
 function App() {
  
   const [filter, setFilter] = useState<Filter>("all")
-  const [view, setView] = useState<View>("detail")
   const [searchText, setSearchText] = useState<string>("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -70,49 +71,55 @@ function App() {
 
   return (
     <>
+    <AppContext.Provider
+      value={{
+        error,
+        loading,
+        handleToggleTodos,
+        handleEditTodos,
+        handleDeleteTodos
+      }}
+    >
       <div className="container">
-        {view === "detail" ?
-          <TodoDetailView
-            view={view}
+        <Routes>
+          <Route 
+          path="/" 
+          element={<TodoDetailView 
             dailyTodos={dailyTodos}
             currentTodos={currentTodos}
             currentCategories={currentCategories}
-            setView={setView}
             selectCategoryId={selectCategoryId}
             dailyCategories={dailyCategories}
             selectedDate={selectedDate}
-            error={error}
-            loading={loading}
             categoryText={categoryText}
             setSelectCategoryId={setSelectCategoryId}
             setCategoryText={setCategoryText}
             onAddCategories={handleAddCategories}
             onDeleteCategory={handleDeleteCategories}
             onChangeDate={changeDate}
-          />:
-          <TodoListView
-            visibleTodos={visibleTodos}
-            view={view}
-            setView={setView}
-            filter={filter}
-            inputText={inputText}
-            searchText={searchText}
-            editingId={editingId}
-            error={error}
-            loading={loading}
-            setFilter={setFilter}
-            setInputText={setInputText}
-            setSearchText={setSearchText}
-            setEditingId={setEditingId}
-            currentTodos={currentTodos}
-            onAddTodos={handleAddTodos}
-            onToggle={handleToggleTodos}
-            onEdit={handleEditTodos}
-            onDelete={handleDeleteTodos}
-            />
-        }
+          />} 
+        />
+        </Routes>
+
+        <Route 
+          path="/list"
+          element={
+            <TodoListView
+              visibleTodos={visibleTodos}
+              filter={filter}
+              inputText={inputText}
+              searchText={searchText}
+              editingId={editingId}
+              setFilter={setFilter}
+              setInputText={setInputText}
+              setSearchText={setSearchText}
+              setEditingId={setEditingId}
+              currentTodos={currentTodos}
+              onAddTodos={handleAddTodos}
+          />}
+        />
       </div>
-        
+    </AppContext.Provider>
     </>
   )
 }

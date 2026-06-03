@@ -1,31 +1,29 @@
-import type { DailyTodo, Filter, View, Todo } from '../components/types'
+import type { DailyTodo, Filter, Todo } from '../components/types'
+import { Link } from "react-router-dom"
 import TodoItem from '../components/Todoitem'
-import { memo } from "react"
+import { memo, useContext } from "react"
+import { AppContext } from "../contexts/AppContext"
 
 type Props = {
   visibleTodos: Todo[]
-  view: View
   filter: Filter
   inputText: string
   searchText: string
   editingId: string | null
-  error: string | null
-  loading: true | false
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>
-  setView: (view: View) => void
   setFilter: (filter: Filter) => void
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
   currentTodos: Todo[]
   onAddTodos: () => void
-  onToggle: (id: string) => void
-  onEdit: (id: string, text: string) => void
-  onDelete: (id: string) => void
 }
 
-function TodoListView({visibleTodos, filter, view, inputText, error, loading, searchText, editingId, setEditingId, setView, setFilter, setInputText, 
-  currentTodos, setSearchText, onAddTodos, onToggle, onEdit, onDelete}:Props) {
+function TodoListView({visibleTodos, filter, inputText, searchText, editingId, setEditingId, setFilter, setInputText, 
+  currentTodos, setSearchText, onAddTodos}:Props) {
 
+    const context = useContext(AppContext)
+    if (!context) return null
+    const { error, loading } = context
   
   return (
     <>
@@ -66,12 +64,13 @@ function TodoListView({visibleTodos, filter, view, inputText, error, loading, se
           todo={todo}
           editingId={editingId}
           setEditingId={setEditingId}
-          onToggle={onToggle}
-          onEdit={onEdit}
-          onDelete={onDelete}
           />
         ))}
-        <button onClick={() => setView("detail")}>戻る</button>
+
+        <Link to="/">
+        <button>戻る</button>
+        </Link>
+
       </div>
     </>
   )

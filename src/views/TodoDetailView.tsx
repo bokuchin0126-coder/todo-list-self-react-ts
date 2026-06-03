@@ -1,18 +1,15 @@
-import type { View, DailyTodo, DailyCategory, Todo, Category } from '../components/types' 
+import type { DailyTodo, DailyCategory, Todo, Category } from '../components/types' 
 import { useState } from 'react'
+import { Link } from "react-router-dom"
 
 type Props = {
-  view: View
   dailyTodos: DailyTodo[]
   currentTodos: Todo[]
   currentCategories: Category[]
-  setView: (view: View) => void
   selectCategoryId: string
   selectedDate: string
   dailyCategories: DailyCategory[]
   categoryText: string
-  error: string | null
-  loading: true | false
   setSelectCategoryId: (id: string) => void
   setCategoryText: (text: string) => void
   onAddCategories: () => void
@@ -20,7 +17,7 @@ type Props = {
   onChangeDate: (number: number) => void
 }
 
-function TodoDetailView ({view, dailyTodos, currentTodos, currentCategories, setView, selectedDate, selectCategoryId, dailyCategories, categoryText, error, loading, setSelectCategoryId, setCategoryText,
+function TodoDetailView ({dailyTodos, currentTodos, currentCategories, selectedDate, selectCategoryId, dailyCategories, categoryText, setSelectCategoryId, setCategoryText,
   onAddCategories, onDeleteCategory, onChangeDate}: Props) {
 
 
@@ -53,10 +50,14 @@ function TodoDetailView ({view, dailyTodos, currentTodos, currentCategories, set
       <div>
         {currentCategories.map((category) => (
           <div key={category.id}>
-            <button
-              onClick={() => {setSelectCategoryId(category.id), setView("list")}}>
-                {category.name}
+
+            <Link to="/list">
+              <button
+                onClick={() => setSelectCategoryId(category.id)}>
+                  {category.name}
               </button>
+            </Link>
+
             <button onClick={() => onDeleteCategory(category.id)}>消去</button>
             <p>達成率{categoryTodo(category.id)}%</p>
           </div>
