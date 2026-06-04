@@ -15,11 +15,11 @@ type Props = {
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
   currentTodos: Todo[]
-  onAddTodos: () => void
+  handleAddTodos: () => void
 }
 
 function TodoListView({visibleTodos, filter, inputText, searchText, editingId, setEditingId, setFilter, setInputText, 
-  currentTodos, setSearchText, onAddTodos}:Props) {
+  currentTodos, setSearchText, handleAddTodos}:Props) {
 
     const context = useContext(AppContext)
     if (!context) return null
@@ -40,12 +40,12 @@ function TodoListView({visibleTodos, filter, inputText, searchText, editingId, s
           onChange={(e) => setInputText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              onAddTodos()
+              handleAddTodos()
             }
           }}
         />
       
-      <button onClick={onAddTodos}>追加</button>
+      <button onClick={handleAddTodos}>追加</button>
       </div>
 
       <div className="filter-group">

@@ -1,80 +1,57 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, DailyCategory } from "../components/types"
+import type { Category } from "../components/types"
 
-function useCategories(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, selectedDate: string) {
+function useCategories(selectedDate: string, setError: Dispatch<SetStateAction<string | null>>) {
 
-  const [dailyCategories, setDailyCategories] = useState<DailyCategory[]>(() => {
+  const [categories, setCategories] = useState<Category[]>(() => {
       const seved = localStorage.getItem("categories")
       return seved ? JSON.parse(seved) : []
     })
   const [categoryText, setCategoryText] = useState<string>("")
-  const currentDay = dailyCategories.find(day => day.date === selectedDate)
-  const currentCategories = currentDay?.categories ?? []
+
   
   const handleAddCategories = () => {
     if (categoryText.trim() === "") return
-    if (!currentDay) {
-      setDailyCategories(prev => [
-        ...prev,
-        {
-          date: selectedDate,
-          categories: [
-            {
-              id: Date.now().toString(),
-              name: categoryText
-            }
-          ]
-        }
-      ])
-    } else {
-      setDailyCategories(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          categories: [
-            ...day.categories,
-            {
-              id: Date.now().toString(),
-              name: categoryText
-            }
-          ]
-        }
-      }))
+   
+    try {
+      setCategories(prev => [...prev, {
+        id: Date.now().toString(),
+        name: categoryText,
+        isEditing: false
+      }])
+    } catch {
+      setError("カテゴリの追加に失敗しました")
+    } finally {
+      setError(null)
+      setCategoryText("")
     }
-    setCategoryText("")
   }
 
-  const handleDeleteCategories = (id: string) => {
-    setDailyCategories(prev => prev.map(day => {
-      if (day.date !== selectedDate) {
-        return day
+  const handleEditCategories = (id: string, text: string, choice: "edit" | "keep") => {
+    try {
+      if (choice === "edit") {
+        setCategories(prev => prev.map(category => (
+          category.id === id ? {...category, isEditing: true} : category
+        )))
+      } else if (choice === "keep") {
+        setCategories(prev => prev.map(category => (
+          category.id === id ? {...category, name: text, isEditing: false} : category
+        )))
       }
-      return {
-        ...day,
-        categories: day.categories.filter(category => category.id !== id)
-      }
-    }))
-    setDailyTodos(prev => prev.map(day => {
-      if (day.date !== selectedDate) {
-        return day
-      }
-      return {
-        ...day,
-        todos: day.todos.filter(todo => todo.categoryId !== id)
-      }
-    }))
+    } catch {
+      setError("編集に失敗しました")
+    } finally {
+      setError(null)
+    }
   } 
 
   return {
-    dailyCategories,
+    categories,
     categoryText,
-    currentCategories,
     setCategoryText,
     handleAddCategories,
-    handleDeleteCategories
+    handleEditCategories
   }
 
 }

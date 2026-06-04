@@ -1,24 +1,23 @@
-import type { DailyTodo, DailyCategory, Todo, Category } from '../components/types' 
+import type { DailyTodo, Category, Todo } from '../components/types' 
 import { useState } from 'react'
 import { Link } from "react-router-dom"
 
 type Props = {
   dailyTodos: DailyTodo[]
   currentTodos: Todo[]
-  currentCategories: Category[]
   selectCategoryId: string
   selectedDate: string
-  dailyCategories: DailyCategory[]
+  categories: Category[]
   categoryText: string
   setSelectCategoryId: (id: string) => void
   setCategoryText: (text: string) => void
-  onAddCategories: () => void
-  onDeleteCategory: (id: string) => void
-  onChangeDate: (number: number) => void
+  handleAddCategories: () => void
+  handleEditCategories: (id: string, text: string, choice: "edit" | "keep") => void
+  changeDate: (number: number) => void
 }
 
-function TodoDetailView ({dailyTodos, currentTodos, currentCategories, selectedDate, selectCategoryId, dailyCategories, categoryText, setSelectCategoryId, setCategoryText,
-  onAddCategories, onDeleteCategory, onChangeDate}: Props) {
+function TodoDetailView ({dailyTodos, currentTodos, selectedDate, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
+  handleAddCategories, handleEditCategories, changeDate}: Props) {
 
 
   const categoryTodo = (categoryId: string) => {
@@ -26,13 +25,15 @@ function TodoDetailView ({dailyTodos, currentTodos, currentCategories, selectedD
     const completed = category.filter((category) => category.status === "completed")
     return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
   }
+
+  const [editText, setEditText] = useState<string>("")
   
   return (
     <>
       <div className="date-control">
-        <button onClick={() => onChangeDate(-1)}>←</button>
+        <button onClick={() => changeDate(-1)}>←</button>
         <p>{selectedDate}</p>
-        <button onClick={() => onChangeDate(1)}>→</button>
+        <button onClick={() => changeDate(1)}>→</button>
       </div>
       <div>
         <input
@@ -41,25 +42,46 @@ function TodoDetailView ({dailyTodos, currentTodos, currentCategories, selectedD
           onChange={(e) => setCategoryText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              onAddCategories()
+              handleAddCategories()
             }
           }}
         />
-        <button onClick={onAddCategories}>追加</button>
+        <button onClick={handleAddCategories}>追加</button>
       </div>
+
       <div>
-        {currentCategories.map((category) => (
+        {categories.map((category) => (
           <div key={category.id}>
 
-            <Link to="/list">
-              <button
-                onClick={() => setSelectCategoryId(category.id)}>
-                  {category.name}
-              </button>
-            </Link>
+            {category.isEditing ?
+              <div>
+                <input
+                  value={editText}
+                  autoFocus
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleEditCategories(category.id, editText, "keep")
+                      setEditText("")
+                    }
+                  }}
+                />
+                <button onClick={() => {handleEditCategories(category.id, editText, "keep"), setEditText("")}}>
+                  保存
+                </button>
+              </div>:
 
-            <button onClick={() => onDeleteCategory(category.id)}>消去</button>
-            <p>達成率{categoryTodo(category.id)}%</p>
+              <div>
+                <Link to="/list">
+                  <button
+                    onClick={() => setSelectCategoryId(category.id)}>
+                    {category.name}{categoryTodo(category.id)}%
+                  </button>
+                </Link>
+                <button onClick={() => {handleEditCategories(category.id, "", "edit"), setEditText(category.name)}}>
+                  編集
+                </button>
+              </div>}
           </div>
         ))}
       </div>

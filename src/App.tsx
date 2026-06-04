@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import type { Filter, View } from './components/types'
+import type { Filter } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
 import useInitializeApp from "./hooks/useInitializeApp"
@@ -36,17 +36,16 @@ function App() {
     changeDate
   } = stateTodos
 
-  const stateCategories = useCategories(setDailyTodos, selectedDate)
+  const stateCategories = useCategories(selectedDate, setError)
   const {
-    dailyCategories,
+    categories,
     categoryText,
-    currentCategories,
     setCategoryText,
     handleAddCategories,
-    handleDeleteCategories
+    handleEditCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, dailyCategories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
+  const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
 
   function search() {
     return currentTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))
@@ -83,41 +82,41 @@ function App() {
       <div className="container">
         <Routes>
           <Route 
-          path="/" 
-          element={<TodoDetailView 
-            dailyTodos={dailyTodos}
-            currentTodos={currentTodos}
-            currentCategories={currentCategories}
-            selectCategoryId={selectCategoryId}
-            dailyCategories={dailyCategories}
-            selectedDate={selectedDate}
-            categoryText={categoryText}
-            setSelectCategoryId={setSelectCategoryId}
-            setCategoryText={setCategoryText}
-            onAddCategories={handleAddCategories}
-            onDeleteCategory={handleDeleteCategories}
-            onChangeDate={changeDate}
-          />} 
-        />
-        </Routes>
-
-        <Route 
-          path="/list"
-          element={
-            <TodoListView
-              visibleTodos={visibleTodos}
-              filter={filter}
-              inputText={inputText}
-              searchText={searchText}
-              editingId={editingId}
-              setFilter={setFilter}
-              setInputText={setInputText}
-              setSearchText={setSearchText}
-              setEditingId={setEditingId}
+            path="/" 
+            element={<TodoDetailView 
+              dailyTodos={dailyTodos}
               currentTodos={currentTodos}
-              onAddTodos={handleAddTodos}
-          />}
-        />
+              selectCategoryId={selectCategoryId}
+              categories={categories}
+              selectedDate={selectedDate}
+              categoryText={categoryText}
+              setSelectCategoryId={setSelectCategoryId}
+              setCategoryText={setCategoryText}
+              handleAddCategories={handleAddCategories}
+              handleEditCategories={handleEditCategories}
+              changeDate={changeDate}
+            />} 
+          />
+        
+
+          <Route 
+            path="/list"
+            element={
+              <TodoListView
+                visibleTodos={visibleTodos}
+                filter={filter}
+                inputText={inputText}
+                searchText={searchText}
+                editingId={editingId}
+                setFilter={setFilter}
+                setInputText={setInputText}
+                setSearchText={setSearchText}
+                setEditingId={setEditingId}
+                currentTodos={currentTodos}
+                handleAddTodos={handleAddTodos}
+            />}
+          />
+        </Routes>
       </div>
     </AppContext.Provider>
     </>
