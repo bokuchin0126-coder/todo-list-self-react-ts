@@ -1,10 +1,9 @@
-import type { DailyTodo, Category, Todo } from '../components/types' 
-import { useState } from 'react'
+import type { Category } from '../components/types' 
+import { useState, useContext } from 'react'
 import { Link } from "react-router-dom"
+import { AppContext } from "../contexts/AppContext"
 
 type Props = {
-  dailyTodos: DailyTodo[]
-  currentTodos: Todo[]
   selectCategoryId: string
   selectedDate: string
   categories: Category[]
@@ -16,9 +15,12 @@ type Props = {
   changeDate: (number: number) => void
 }
 
-function TodoDetailView ({dailyTodos, currentTodos, selectedDate, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
+function TodoDetailView ({selectedDate, selectCategoryId, categories, categoryText, setSelectCategoryId, setCategoryText,
   handleAddCategories, handleEditCategories, changeDate}: Props) {
 
+    const context = useContext(AppContext)
+    if (!context) throw new Error("AppContext not found")
+    const { currentTodos } = context
 
   const categoryTodo = (categoryId: string) => {
     const category = currentTodos.filter((todo) => todo.categoryId === categoryId) ?? []
@@ -84,6 +86,8 @@ function TodoDetailView ({dailyTodos, currentTodos, selectedDate, selectCategory
               </div>}
           </div>
         ))}
+
+        <Link to="/stats">達成率一覧</Link>
       </div>
     </>
   )

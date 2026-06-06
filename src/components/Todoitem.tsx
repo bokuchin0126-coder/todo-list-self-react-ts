@@ -18,7 +18,7 @@ function TodoItem({ todo, editingId, setEditingId }: Props) {
   const isEditing = editingId === todo.id
 
   const context = useContext(AppContext)
-  if (!context) return null
+  if (!context) throw new Error("AppContext not found")
   const { handleToggleTodos, handleDeleteTodos, handleEditTodos} = context
 
     return (

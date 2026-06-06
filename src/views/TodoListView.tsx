@@ -14,16 +14,15 @@ type Props = {
   setFilter: (filter: Filter) => void
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
-  currentTodos: Todo[]
   handleAddTodos: () => void
 }
 
 function TodoListView({visibleTodos, filter, inputText, searchText, editingId, setEditingId, setFilter, setInputText, 
-  currentTodos, setSearchText, handleAddTodos}:Props) {
+  setSearchText, handleAddTodos}:Props) {
 
     const context = useContext(AppContext)
-    if (!context) return null
-    const { error, loading } = context
+    if (!context) throw new Error("AppContext not found")
+    const { error, loading, currentTodos } = context
   
   return (
     <>

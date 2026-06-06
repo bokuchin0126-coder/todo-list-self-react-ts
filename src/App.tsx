@@ -3,11 +3,13 @@ import { Routes, Route } from 'react-router-dom'
 import type { Filter } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
+import useStats from "./hooks/useStats"
 import useInitializeApp from "./hooks/useInitializeApp"
 import TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
 import { AppContext } from "./contexts/AppContext"
 import './App.css'
+import TodoStatsView from './views/TodoStatsView'
 
 function App() {
  
@@ -45,6 +47,13 @@ function App() {
     handleEditCategories
   } = stateCategories
 
+  const stats = useStats(today, dailyTodos)
+  const {
+    todayAchievement,
+    periodAchievement,
+    continuousAchievement
+  } = stats
+
   const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
 
   function search() {
@@ -72,8 +81,10 @@ function App() {
     <>
     <AppContext.Provider
       value={{
+        dailyTodos,
         error,
         loading,
+        currentTodos,
         handleToggleTodos,
         handleEditTodos,
         handleDeleteTodos
@@ -84,8 +95,6 @@ function App() {
           <Route 
             path="/" 
             element={<TodoDetailView 
-              dailyTodos={dailyTodos}
-              currentTodos={currentTodos}
               selectCategoryId={selectCategoryId}
               categories={categories}
               selectedDate={selectedDate}
@@ -97,8 +106,7 @@ function App() {
               changeDate={changeDate}
             />} 
           />
-        
-
+      
           <Route 
             path="/list"
             element={
@@ -112,11 +120,21 @@ function App() {
                 setInputText={setInputText}
                 setSearchText={setSearchText}
                 setEditingId={setEditingId}
-                currentTodos={currentTodos}
                 handleAddTodos={handleAddTodos}
             />}
           />
+      
+          <Route 
+            path="/stats"
+            element={
+              <TodoStatsView
+                todayAchievement={todayAchievement}
+                periodAchievement={periodAchievement}
+                continuousAchievement={continuousAchievement}
+              />}
+          />
         </Routes>
+
       </div>
     </AppContext.Provider>
     </>
