@@ -1,78 +1,51 @@
 import { useState } from "react"
-import type { Category, DailyTodo, DailyCategory } from "../components/types"
+import type { Category } from "../components/types"
 
-function useCategories(setDailyTodos: React.Dispatch<React.SetStateAction<DailyTodo[]>>, selectedDate: string ) {
-  const [dailyCategories, setDailyCategories] = useState<DailyCategory[]>(() => {
+function useCategories(setError: React.Dispatch<React.SetStateAction<string | null>>) {
+  const [categories, setCategories] = useState<Category[]>(() => {
     const saved = localStorage.getItem("categories")
     return saved ? JSON.parse(saved) : []
   })
-  const currentDate = dailyCategories.find(day => day.date === selectedDate)
-  const currentCategories = currentDate?.categories ?? []
 
   const handleAddCategories = (text: string) => {
     if (text.trim() === "") return
-    if (!currentDate) {
-      setDailyCategories(prev => [
-        ...prev,
-        {
-          date: selectedDate,
-          categories: [
-            {
-              id: Date.now().toString(),
-              name: text
-            }
-          ]
-        }
-      ])
-    } else {
-      setDailyCategories(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          categories: [
-            ...day.categories,
-            {
-              id: Date.now().toString(),
-              name: text
-            }
-          ]
-        }
-      }))
+    try {
+      setCategories(prev => [...prev, {
+        id: Date.now().toString(),
+        name: text,
+        isEditing: false
+      }])
+    } catch {
+      setError("カテゴリの追加に失敗しました")
+    } finally {
+      setError(null)
     }
   }
 
-  const handleDeleteCategories = (id: string) => {
-    const category = currentCategories.filter(category => category.id === id)
-    if (!category) return 
-
-    setDailyCategories(prev => prev.map(day => {
-      if (day.date !== selectedDate) {
-        return day
+  const handleEditCategories = (id: string, text: string, choose: "edit" | "keep") => {
+    try {
+      if (choose === "edit") {
+        setCategories(prev => prev.map(category => (
+          category.id === id ? {...category, isEditing: true} : category
+        )))
+      } else if (choose === "keep") {
+        setCategories(prev => prev.map(category => (
+          category.id === id ? {...category, name: text, isEditing: false} : category
+        )))
       }
-      return {
-        ...day,
-        categories: day.categories.filter(category => category.id !== id)
-      }
-    }))
-    setDailyTodos(prev => prev.map(day => {
-      if (day.date !== selectedDate) {
-        return day
-      }
-      return {
-        ...day,
-        todos: day.todos.filter(todo => todo.categoryId !== id)
-      }
-    }))
+    } catch {
+      setError("カテゴリの編集に失敗しました")
+    } finally {
+      setError(null)
+    }
   }
 
+
   return {
-    dailyCategories,
-    currentCategories,
-    setDailyCategories,
+    categories,
+    setCategories,
     handleAddCategories,
-    handleDeleteCategories
+    handleEditCategories
   }
 }
 

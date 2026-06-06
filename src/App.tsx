@@ -1,22 +1,26 @@
 import { useState } from 'react'
-import type { Filter, View } from './components/types'
+import { Routes, Route } from "react-router-dom"
+import type { Filter } from './components/types'
 import useTodos from "./hooks/useTodos"
 import useCategories from "./hooks/useCategories"
+import useStats from "./hooks/useStats"
 import useInitializeApp from "./hooks/useInitializeApp"
 import  TodoListView from './views/TodoListView'
 import TodoDetailView from './views/TodoDetailView'
+import TodoStatsView from './views/TodoStatsView'
+import { AppContext } from "./contexts/AppContext"
 import './App.css'
 
 function App() {
 
   const [filter, setFilter] = useState<Filter>("all")
-  const [view, setView] = useState<View>("detail")
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
   const stateTodos = useTodos(setError, setLoading)
   const {
     dailyTodos,
+    today,
     selectedDate,
     currentTodos,
     editingId,
@@ -35,16 +39,21 @@ function App() {
     changeDate
   } = stateTodos
 
-  const stateCategories = useCategories(setDailyTodos, selectedDate)
+  const stateCategories = useCategories(setError)
   const {
-    dailyCategories,
-    setDailyCategories,
-    currentCategories,
+    categories,
     handleAddCategories,
-    handleDeleteCategories
+    handleEditCategories
   } = stateCategories
 
-  const localStorage = useInitializeApp(dailyTodos, dailyCategories, selectCategoryId, setError, setLoading, setDailyTodos, selectedDate)
+  const stats = useStats(today, dailyTodos)
+  const {
+    todayAchievement,
+    periodAchievement,
+    continuousAchievement
+  } = stats
+
+  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos, selectedDate)
 
   const filteredTodos = currentTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"
@@ -60,49 +69,61 @@ function App() {
 
   return (
     <>
+    <AppContext.Provider
+      value={{
+        error,
+        loading,
+        handleDeleteTodos,
+        handleToggleTodos,
+        handleEditTodos
+      }}
+    >
       <div className="app">
-        {view === "detail" ? 
-          <TodoDetailView
-            view={view}
-            dailyTodos={dailyTodos}
-            currentTodos={currentTodos}
-            dailyCategories={dailyCategories}
-            currentCategories={currentCategories}
-            error={error}
-            loading={loading}
-            selectedDate={selectedDate}
-            selectCategoryId={selectCategoryId}
-            setView={setView}
-            setDailyCategories={setDailyCategories}
-            setSelectCategoryId={setSelectCategoryId}
-            categoriesTodos={categoriesTodos}
-            onAddCategories={handleAddCategories}
-            onDeleteCategories={handleDeleteCategories}
-            onChangeDate={changeDate}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <TodoDetailView
+                categories={categories}
+                currentTodos={currentTodos}
+                selectedDate={selectedDate}
+                setSelectCategoryId={setSelectCategoryId}
+                handleAddCategories={handleAddCategories}
+                handleEditCategories={handleEditCategories}
+                changeDate={changeDate}
+              />}
+            />
+        
+          <Route
+            path="/list"
+            element={
+              <TodoListView
+                inputText={inputText}
+                searchText={searchText}
+                editingId={editingId}
+                categoriesTodos={categoriesTodos}
+                setInputText={setInputText}
+                setSearchText={setSearchText}
+                setFilter={setFilter}
+                setEditingId={setEditingId}
+                searchFilter={searchFilter}
+                handleAddTodos={handleAddTodos}
+              />}
+          />  
+
+          <Route
+            path="/stats"
+            element={
+              <TodoStatsView
+                todayAchievement={todayAchievement}
+                periodAchievement={periodAchievement}
+                continuousAchievement={continuousAchievement}
+              />
+            }
           />
-        :
-          <TodoListView
-            dailyTodos={dailyTodos}
-            inputText={inputText}
-            searchText={searchText}
-            filter={filter}
-            editingId={editingId}
-            categoriesTodos={categoriesTodos}
-            error={error}
-            loading={loading}
-            setInputText={setInputText}
-            setSearchText={setSearchText}
-            setFilter={setFilter}
-            setEditingId={setEditingId}
-            setView={setView}
-            searchFilter={searchFilter}
-            onAddTodos={handleAddTodos}
-            onToggle={handleToggleTodos}
-            onEdit={handleEditTodos}
-            onDelete={handleDeleteTodos}
-          />
-        }
+        </Routes>
       </div>
+    </AppContext.Provider>
     </>
   )
 }

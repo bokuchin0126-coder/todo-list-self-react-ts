@@ -1,16 +1,18 @@
 import type { Todo } from './types'
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect, useRef, useContext} from 'react'
+import { AppContext } from "../contexts/AppContext"
 
 type Props = {
   todo: Todo
   editingId: (string | null)
   setEditingId: (id: string | null) => void
-  onToggle: (id: string) => void
-  onEdit: (id: string, text: string) => void
-  onDelete: (id: string) => void
 }
 
-function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: Props) {
+function Todoitem({todo, editingId, setEditingId}: Props) {
+
+    const todoContext = useContext(AppContext)
+    if (!todoContext) throw new Error("Context not found")
+    const { handleDeleteTodos, handleToggleTodos, handleEditTodos } = todoContext
 
     const [editText, setEditText] = useState<string>("")
     const containerRef = useRef<HTMLDivElement | null>(null)
@@ -50,7 +52,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
       <>
         <div className="todo-item" ref={containerRef}>
           <div className="todo-main">
-            <button className="completed" onClick={() => onToggle(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
+            <button className="completed" onClick={() => handleToggleTodos(todo.id)}>{todo.status === "active" ? "□" : "☑"}</button>
 
             {editingId === todo.id ? (
                 <input
@@ -60,7 +62,7 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
                   onChange={(e) => setEditText(e.target.value)}
                   onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                          onEdit(todo.id, editText)
+                          handleEditTodos(todo.id, editText)
                           setEditingId(null)
                       }
                   }}
@@ -77,13 +79,13 @@ function Todoitem({todo, editingId, setEditingId, onToggle, onEdit, onDelete}: P
 
             {editingId === todo.id && (
               <button onClick={() => {
-                onEdit(todo.id, editText) 
+                handleEditTodos(todo.id, editText) 
                 setEditingId(null)
               }}>
                 保存
             </button>
             )}
-            <button onClick={() => onDelete(todo.id)}>消去</button>
+            <button onClick={() => handleDeleteTodos(todo.id)}>消去</button>
           </div>
         </div>
       </>

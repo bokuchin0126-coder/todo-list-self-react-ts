@@ -1,29 +1,28 @@
 import TodoItem from '../components/Todoitem'
-import type { Todo, Filter, View, DailyTodo } from '../components/types'
+import type { Todo, Filter } from '../components/types'
+import { Link } from "react-router-dom"
+import { useContext } from "react"
+import { AppContext } from "../contexts/AppContext"
 
 type Props = {
-  dailyTodos: DailyTodo[]
   inputText: string
   searchText: string
-  filter: Filter
   editingId: (string | null)
   categoriesTodos: Todo[]
-  error: string | null
-  loading: boolean
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
   setFilter: (filter: Filter) => void
   setEditingId: (id: string | null) => void
-  setView: (view: View) => void
   searchFilter: Todo[]
-  onAddTodos: (text: string) => void
-  onToggle: (id: string) => void
-  onEdit: (id: string, text: string) => void
-  onDelete: (id: string) => void
+  handleAddTodos: (text: string) => void
 }
 
-function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, categoriesTodos, error, loading, setInputText, setSearchText, setFilter, setEditingId,
-  setView, searchFilter, onAddTodos, onToggle, onEdit, onDelete}: Props) {
+function TodoListView ({inputText, searchText, editingId, categoriesTodos, setInputText, setSearchText, setFilter, setEditingId,
+  searchFilter, handleAddTodos}: Props) {
+
+    const todoContext = useContext(AppContext)
+    if (!todoContext) throw new Error("Context not found")
+    const { error, loading } = todoContext
 
   return (
     <>
@@ -45,10 +44,10 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
                 placeholder="リストを追加..."
                 onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    onAddTodos(inputText)
+                    handleAddTodos(inputText)
                 }
                 }}/>
-            <button className="app-button" onClick={() => onAddTodos(inputText)}>追加</button>
+            <button className="app-button" onClick={() => handleAddTodos(inputText)}>追加</button>
         </div>
         <div className="filter-buttons">
             <button onClick={() => setFilter("all")}>全て</button>
@@ -63,13 +62,10 @@ function TodoListView ({dailyTodos, inputText, searchText, filter, editingId, ca
               todo={todo}
               editingId={editingId}
               setEditingId={setEditingId}
-              onToggle={onToggle}
-              onEdit={onEdit}
-              onDelete={onDelete}
             />
           ))}
         </div>
-        <button onClick={() => setView("detail")}>戻る</button>
+        <Link to="/">戻る</Link>
     </>
   )
 }
