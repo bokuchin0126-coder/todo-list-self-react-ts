@@ -50,7 +50,7 @@ function TodoDetailView ({categories, selectedDate, setSelectCategoryId, handleA
                 }
               }} 
             />
-            <button onClick={() => handleAddCategories(inputText)}>追加</button>
+            <button onClick={() => {handleAddCategories(inputText), setInputText("")}}>追加</button>
           </div>
         {error && <p>{error}</p>}
         {loading && <p>ローディング中...</p>}
@@ -85,7 +85,9 @@ function TodoDetailView ({categories, selectedDate, setSelectCategoryId, handleA
                     </div>
                   }
 
-                  <p className="category-progress">達成率{categoryTodo(category.id)}%</p>
+                  <p className="category-progress">
+                    {categoryTodo(category.id) === 0 ? "未開始" : "達成率" + categoryTodo(category.id) + "%"}
+                  </p>
                 </div>
 
                 <div className="category-buttons">

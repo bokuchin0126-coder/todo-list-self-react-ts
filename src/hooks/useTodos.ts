@@ -1,12 +1,10 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, Todo } from "../components/types"
+import type { Todo } from "../components/types"
+import { supabase } from "../lib/supabase"
 
 function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>) {
-  const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
-    const saved = localStorage.getItem("todos")
-    return saved ? JSON.parse(saved) : []
-  })
+  const [todos, setTodos] = useState<Todo[]>([])
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -19,8 +17,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
   }).format(new Date())
   
   const [selectedDate, setSelectedDate] = useState(today)
-  const currentDay = dailyTodos.find(day => day.date === selectedDate)
-  const currentTodos = currentDay?.todos ?? []
+  const currentTodos = todos.filter(todo => todo.todoDate === selectedDate)
 
   const changeDate = (number: number) => {
     const date = new Date(selectedDate)
@@ -31,6 +28,8 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
       month: "2-digit",
       day: "2-digit"
     }).format(date)
+  
+    if (formatted > today) return 
 
     setSelectedDate(formatted)
   }
@@ -40,34 +39,29 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     setLoading(true)
     
     try {
-      const res = await fetch("https://jsonplaceholder.typicode.com/todos", {
-        method: "POST",
-        headers: {
-          "Content-type" : "application/json"
-        },
-        body: JSON.stringify({
-          title: text,
-          completed: false
+      const { data, error } = await supabase
+        .from("todos")
+        .insert({
+          text: text,
+          status: "active",
+          category_id: selectCategoryId,
+          todo_date: selectedDate
         })
-      })
-      const date = await res.json()
-      
-      const newTodo: Todo = {
-        id: crypto.randomUUID(),
-        text: date.title,
-        status: "active",
-        categoryId: selectCategoryId
-      }
+        .select()
 
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: [...day.todos, newTodo]
-        }
-      }))
+      if (error) throw error
+      if (!data) throw error
+
+      const newTodo: Todo = {
+        id: data[0].id,
+        text: data[0].text,
+        status: data[0].status,
+        categoryId: selectCategoryId,
+        createdAt: data[0].created_at,
+        todoDate: selectedDate
+      }
+      
+      setTodos(prev => [...prev, newTodo])
       setInputText("")
     } catch(e) {
       setError("リストの追加に失敗しました")
@@ -79,33 +73,25 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
   }
 
   const handleToggleTodos = async (id: string) => {
-    const todo = currentTodos.find(todo => todo.id === id)
-    if (!todo) return
     setLoading(true)
+    const todo = todos.find(todo => todo.id === id)
+    if (!todo) return 
+    const status = todo.status === "completed" ? "active" : "completed"
 
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-type" : "application/json"
-        },
-        body: JSON.stringify({
-          completed: todo.status !== "completed"
+      const { error } = await supabase
+        .from("todos")
+        .update({
+          status: status
         })
-      })
-      const date = await res.json()
+        .eq("id", id)
 
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} : todo
-          ))
-        }
-      }))
+      if (error) throw error
+
+      setTodos(prev => prev.map(todo => (
+        todo.id === id ? {...todo, status: status} : todo
+      )))
+
     } catch {
       setError("更新に失敗しました")
     } finally {
@@ -119,28 +105,20 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     setLoading(true)
 
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`,{
-        method: "PATCH",
-        headers: {
-          "Content-type" : "application/json"
-        },
-        body: JSON.stringify({
-          title: text
+      const { data, error } = await supabase
+        .from("todos")
+        .update({
+          text: text
         })
-      })
-      const date = await res.json()
-      
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, text: date.title} : todo
-          ))
-        }
-      }))
+        .eq("id", id)
+        .select()
+
+      if (error) throw error
+
+      setTodos(prev => prev.map(todo => (
+        todo.id === id ? {...todo, text: data?.[0].text} : todo
+      )))
+
     } catch(e) {
       setError("保存に失敗しました")
     } finally {
@@ -155,18 +133,15 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     setLoading(true)
 
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: "DELETE"})
+      const { error } = await supabase
+        .from("todos")
+        .delete()
+        .eq("id", id)
 
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.filter(todo => todo.id !== id)
-        }
-      }))
+      if (error) throw error
+
+      setTodos(prev => prev.filter(todo => todo.id !== id))
+
     } catch {
       setError("消去に失敗しました")
     } finally {
@@ -175,7 +150,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     }
   }
   return {
-    dailyTodos,
+    todos,
     today,
     selectedDate,
     currentTodos,
@@ -183,7 +158,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     editingId,
     searchText,
     selectCategoryId,
-    setDailyTodos,
+    setTodos,
     setInputText,
     setEditingId,
     setSearchText,

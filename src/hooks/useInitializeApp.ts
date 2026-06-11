@@ -1,53 +1,45 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, ApiTodo, Category } from "../components/types"
+import type { Todo, Category } from "../components/types"
+import { supabase } from "../lib/supabase"
 
-function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], selectCategoryId: string, setError: Dispatch<SetStateAction<string | null>>, 
-  setLoading: Dispatch<SetStateAction<boolean>>, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, selectedDate: string) {
-
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(dailyTodos))
-  }, [dailyTodos])
+function useInitializeApp(todos: Todo[], categories: Category[], selectCategoryId: string, setError: Dispatch<SetStateAction<string | null>>, 
+  setLoading: Dispatch<SetStateAction<boolean>>, setTodos: Dispatch<SetStateAction<Todo[]>>, selectedDate: string) {
 
   useEffect(() => {
     localStorage.setItem("categories", JSON.stringify(categories))
   }, [categories])
 
   useEffect(() => {
-    setLoading(true)
-    const saved = localStorage.getItem("todos")
-    if (!saved) return setLoading(false)
+    const fetchTodos = async () => {
+      try {
+        setLoading(true)
 
-    const parsed = JSON.parse(saved)
-    const hasToday = parsed.some(
-      (day: DailyTodo) => day.date === selectedDate
-    )
-    
-    if (!hasToday) {
-      async function ApiTodo() {
-        try {
-          const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=8")
-          const date = await res.json()
+        const { data, error } = await supabase
+          .from("todos")
+          .select("*")
 
-          const conversion = date.map((item: ApiTodo) => ({
-            id: item.id.toString(),
-            text: item.title,
-            status: item.completed ? "completed" : "active",
-            categoryId: selectCategoryId
-          }))
-          setDailyTodos([...parsed, {date: selectedDate, todos: conversion}])
-        } catch(e) {
-          setError("データの取得に失敗しました")
-        } finally {
-          setLoading(false)
-        }
+        if (error) throw error
+        if (!data) return
+
+        const todos = data.map(todo => ({
+          id: todo.id,
+          text: todo.text,
+          status: todo.status,
+          categoryId: String(todo.category_id),
+          createdAt: todo.created_at,
+          todoDate: todo.todo_date
+        }))
+
+        setTodos(todos)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        setLoading(false)
       }
-      ApiTodo()
-    } else if (hasToday) {
-      setLoading(false)
-      return
-    } 
-  }, [selectedDate])
+    }
+    fetchTodos()
+  }, [])
 
 }
 

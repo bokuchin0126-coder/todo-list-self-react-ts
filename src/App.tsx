@@ -19,7 +19,7 @@ function App() {
 
   const stateTodos = useTodos(setError, setLoading)
   const {
-    dailyTodos,
+    todos,
     today,
     selectedDate,
     currentTodos,
@@ -27,7 +27,7 @@ function App() {
     inputText,
     searchText,
     selectCategoryId,
-    setDailyTodos,
+    setTodos,
     setEditingId,
     setInputText,
     setSearchText,
@@ -46,14 +46,14 @@ function App() {
     handleEditCategories
   } = stateCategories
 
-  const stats = useStats(today, dailyTodos)
+  const stats = useStats(today, todos)
   const {
     todayAchievement,
     periodAchievement,
     continuousAchievement
   } = stats
 
-  const localStorage = useInitializeApp(dailyTodos, categories, selectCategoryId, setError, setLoading, setDailyTodos, selectedDate)
+  const localStorage = useInitializeApp(todos, categories, selectCategoryId, setError, setLoading, setTodos, selectedDate)
 
   const filteredTodos = currentTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"

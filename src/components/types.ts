@@ -3,12 +3,10 @@ export type Todo = {
     text: string
     status: "completed" | "active"
     categoryId: string
+    createdAt: string
+    todoDate: string
 }
 
-export type DailyTodo = {
-    date: string 
-    todos: Todo[]
-}
 
 export type Category = {
     id: string
@@ -16,12 +14,5 @@ export type Category = {
     isEditing: boolean
 }
 
-export type ApiTodo = {
-    id: string
-    title: string
-    completed: boolean
-}
-
-export type View = "list" | "detail"
 
 export type Filter = "all" | "completed" | "active"

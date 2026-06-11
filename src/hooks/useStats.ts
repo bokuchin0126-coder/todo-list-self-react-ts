@@ -1,12 +1,11 @@
-import type { DailyTodo } from "../components/types"
+import type { Todo } from "../components/types"
 
-function useStats(today: string, dailyTodos: DailyTodo[]) {
+function useStats(today: string, todos: Todo[]) {
 
     const todayAchievement = () => {
-        const todayDate = dailyTodos.find(day => day.date === today)
-        if (!todayDate) return 0
+        const todayTodos = todos.filter(todo => todo.todoDate === today)
+        if (todayTodos.length === 0) return 0
 
-        const todayTodos = todayDate.todos
         const completed = todayTodos.filter(todo => todo.status === "completed").length
 
         return Math.floor((completed / todayTodos.length) * 100)
@@ -17,35 +16,32 @@ function useStats(today: string, dailyTodos: DailyTodo[]) {
         date.setDate(date.getDate() - number)
         const endDate = new Date(today)
 
-        const targetDate = dailyTodos.filter(day => {
-            const target = new Date(day.date)
+        const targetDate = todos.filter(todo => {
+            const target = new Date(todo.todoDate)
             return target >= date && target <= endDate
         })
-        const targetTodos = targetDate.flatMap(day => day.todos)
-        const completed = targetTodos.filter(todo => todo.status === "completed").length
+  
+        const completed = targetDate.filter(todo => todo.status === "completed").length
 
-        return Math.floor((completed / targetTodos.length) * 100)
+        return Math.floor((completed / targetDate.length) * 100)
     }
 
     const continuousAchievement = () => {
         const date = new Date(today)
         let number = 0
-        const formatter = new Intl.DateTimeFormat("ja-JP", {
+        const formatter = new Intl.DateTimeFormat("en-CA", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit"
         })
 
-        for (let i = 0; i < dailyTodos.length; i++) {
+        for (let i = 0; i < todos.length; i++) {
             const formatted = formatter.format(date)
-            const targetDate = dailyTodos.find(day => day.date === formatted)
+            const targetTodos = todos.filter(todo => todo.todoDate === formatted)
 
-            if (!targetDate) {
-                date.setDate(date.getDate() - 1)
-                continue
+            if (targetTodos.length === 0 && formatted !== today) {
+                return number
             }
-            const targetTodos = targetDate.todos
-            if (targetTodos.length === 0) continue
 
             const completed = targetTodos.filter(todo => todo.status === "completed").length
             const achievement = completed / targetTodos.length
@@ -55,6 +51,7 @@ function useStats(today: string, dailyTodos: DailyTodo[]) {
                     date.setDate(date.getDate() - 1)
                     number += 1
                 } else {
+                    date.setDate(date.getDate() - 1)
                     continue
                 }
             }
