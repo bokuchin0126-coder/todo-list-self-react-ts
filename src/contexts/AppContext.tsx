@@ -1,8 +1,8 @@
 import { createContext } from "react"
-import type { Todo, DailyTodo } from "../components/types"
+import type { Todo } from "../components/types"
 
 type AppContextType = {
-    dailyTodos: DailyTodo[]
+    todos: Todo[]
     error: string | null
     loading: boolean
     currentTodos: Todo[]

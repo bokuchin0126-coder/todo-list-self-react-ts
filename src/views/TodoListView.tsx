@@ -1,4 +1,4 @@
-import type { DailyTodo, Filter, Todo } from '../components/types'
+import type { Filter, Todo } from '../components/types'
 import { Link } from "react-router-dom"
 import TodoItem from '../components/Todoitem'
 import { memo, useContext } from "react"
@@ -23,6 +23,7 @@ function TodoListView({visibleTodos, filter, inputText, searchText, editingId, s
     const context = useContext(AppContext)
     if (!context) throw new Error("AppContext not found")
     const { error, loading, currentTodos } = context
+
   
   return (
     <>

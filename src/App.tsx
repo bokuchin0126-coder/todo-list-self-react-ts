@@ -19,16 +19,21 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const stateTodos = useTodos(loading, setError, setLoading)
+  const errorTime = () => {
+    setTimeout(() => {
+      setError(null)
+    }, 5000)
+  }
+
+  const stateTodos = useTodos(loading, setError, setLoading, errorTime)
   const {
-    dailyTodos,
+    todos,
     inputText,
     selectCategoryId,
     today,
-    currentDate,
     currentTodos,
     selectedDate,
-    setDailyTodos,
+    setTodos,
     setInputText,
     setSelectCategoryId,
     handleAddTodos,
@@ -47,14 +52,14 @@ function App() {
     handleEditCategories
   } = stateCategories
 
-  const stats = useStats(today, dailyTodos)
+  const stats = useStats(today, todos)
   const {
     todayAchievement,
     periodAchievement,
     continuousAchievement
   } = stats
 
-  const localStorage = useInitializeApp(dailyTodos, categories, setDailyTodos, setError, setLoading, selectedDate, setEditingId)
+  const localStorage = useInitializeApp(todos, categories, setTodos, setError, setLoading, selectedDate, setEditingId)
 
   function search() {
     return currentTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))
@@ -81,7 +86,7 @@ function App() {
     <>
     <AppContext.Provider
       value={{
-        dailyTodos,
+        todos,
         error,
         loading,
         currentTodos,

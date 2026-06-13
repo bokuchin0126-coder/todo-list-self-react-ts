@@ -1,51 +1,31 @@
 import { useEffect } from "react"
+import { supabase } from "../lib/supabase"
 import type { Dispatch, SetStateAction } from "react"
-import type { DailyTodo, Category, ApiTodo, Todo } from "../components/types"
+import type { Todo, Category } from "../components/types"
 
-function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, 
+function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispatch<SetStateAction<Todo[]>>, 
     setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string,
     setEditingId: Dispatch<SetStateAction<string | null>>) {
 
   useEffect(() => {
-    setLoading(true)
-    const saved = localStorage.getItem("todos")
-    if (!saved) return setLoading(false)
-    
-    const parsed = JSON.parse(saved)
-    const hasToday = parsed.some(
-      (day: DailyTodo) => day.date === selectedDate
-    )
-  
-    if (!hasToday) {
-      const fetchDate = async () => {
-        try {
-          const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
-          const date: ApiTodo[] = await res.json()
+    const fetch = async () => {
+      try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .from("todos")
+          .select("*")
 
-          const converted: Todo[] = date.map((item: ApiTodo) => ({
-            id: item.id.toString(),
-            text: item.title,
-            status: item.completed ? "completed" : "active",
-            categoryId: ""
-          }))
+        if (error) throw error
 
-          setDailyTodos([...parsed, {date: selectedDate, todos: converted}])
-        } catch {
-          setError("データの取得に失敗しました")
-        } finally {
-          setLoading(false)
-          setError(null)
-        }
+        setTodos(data)
+      } catch {
+        setError("データの取得に失敗しました")
+      } finally {
+        setLoading(false)
       }
-      fetchDate()
-    } else if (hasToday) {
-      setLoading(false)
     }
+    fetch()
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(dailyTodos))
-  }, [dailyTodos])
 
   useEffect(() => {
     localStorage.setItem("categories", JSON.stringify(categories))
