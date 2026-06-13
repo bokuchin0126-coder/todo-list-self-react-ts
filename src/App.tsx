@@ -79,7 +79,6 @@ function App() {
     return filteredTodos.filter((todo) => todo.categoryId === selectCategoryId)
   }
   const visibleTodos = categorizeFilter()
-
   
 
   return (

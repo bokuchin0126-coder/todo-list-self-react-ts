@@ -17,7 +17,15 @@ function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispa
 
         if (error) throw error
 
-        setTodos(data)
+        const mapped = data.map(todo => ({
+          id: todo.id,
+          text: todo.text,
+          status: todo.status,
+          categoryId: todo.category_id.toString(),
+          todoDate: todo.todo_date
+        }))
+
+        setTodos(mapped)
       } catch {
         setError("データの取得に失敗しました")
       } finally {
