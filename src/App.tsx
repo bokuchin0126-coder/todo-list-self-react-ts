@@ -43,9 +43,10 @@ function App() {
     changeDate
   } = stateTodos
 
-  const stateCategories = useCategories(selectedDate, setError)
+  const stateCategories = useCategories(selectedDate, setError, errorTime, setLoading)
   const {
     categories,
+    setCategories,
     categoryText,
     setCategoryText,
     handleAddCategories,
@@ -59,7 +60,9 @@ function App() {
     continuousAchievement
   } = stats
 
-  const localStorage = useInitializeApp(todos, categories, setTodos, setError, setLoading, selectedDate, setEditingId)
+  const localStorage = useInitializeApp(todos, setCategories, setTodos, setError, setLoading, selectedDate, setEditingId, selectCategoryId,
+    errorTime
+  )
 
   function search() {
     return currentTodos.filter(todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))

@@ -1,14 +1,14 @@
 export type Todo = {
-    id: string
+    id: number
     text: string
     status: "completed" | "active"
-    categoryId: string
+    categoryId: number
     todoDate: string
 }
 
 
 export type Category = {
-    id: string
+    id: number
     name: string
     isEditing: boolean
 }

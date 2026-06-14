@@ -3,9 +3,9 @@ import { supabase } from "../lib/supabase"
 import type { Dispatch, SetStateAction } from "react"
 import type { Todo, Category } from "../components/types"
 
-function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispatch<SetStateAction<Todo[]>>, 
+function useInitializeApp(todos: Todo[], setCategories: Dispatch<SetStateAction<Category[]>>, setTodos: Dispatch<SetStateAction<Todo[]>>, 
     setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string,
-    setEditingId: Dispatch<SetStateAction<string | null>>) {
+    setEditingId: Dispatch<SetStateAction<string | null>>, selectCategoryId: number, errorTime: () => void) {
 
   useEffect(() => {
     const fetch = async () => {
@@ -21,7 +21,7 @@ function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispa
           id: todo.id,
           text: todo.text,
           status: todo.status,
-          categoryId: todo.category_id.toString(),
+          categoryId: todo.category_id,
           todoDate: todo.todo_date
         }))
 
@@ -29,6 +29,7 @@ function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispa
       } catch {
         setError("データの取得に失敗しました")
       } finally {
+        errorTime()
         setLoading(false)
       }
     }
@@ -36,8 +37,28 @@ function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispa
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("categories", JSON.stringify(categories))
-  }, [categories])
+    const fetch = async () => {
+      try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .from("categories")
+          .select("*")
+
+        if (error) throw error
+        setCategories(data.map(category => ({
+          id: category.id,
+          name: category.name,
+          isEditing: false
+        })))
+      } catch {
+        setError("データの取得に失敗しました")
+      } finally {
+        errorTime()
+        setLoading(false)
+      }
+    }
+    fetch()
+  }, [])
 
   useEffect(() => {
     const handleClick = () => {
@@ -50,6 +71,10 @@ function useInitializeApp(todos: Todo[], categories: Category[], setTodos: Dispa
       document.removeEventListener("click", handleClick)
     }
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem("selectCategoryId", String(selectCategoryId))
+  }, [selectCategoryId])
 }
 
 export default useInitializeApp

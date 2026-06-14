@@ -8,7 +8,10 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
 
   const [todos, setTodos] = useState<Todo[]>([])
   const [inputText, setInputText] = useState<string>("")
-  const [selectCategoryId, setSelectCategoryId] = useState<string>("")
+  const [selectCategoryId, setSelectCategoryId] = useState<number>(() => {
+    const saved = localStorage.getItem("selectCategoryId")
+    return saved ? Number(saved) : 0
+  })
 
   const today = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Tokyo",
@@ -69,7 +72,7 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
     }
   }
 
-  const handleDeleteTodos = async (id: string) => {
+  const handleDeleteTodos = async (id: number) => {
     if (loading) return
     
     try {
@@ -90,7 +93,7 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
     }
   }
   
-  const handleToggleTodos = async (id: string) => {
+  const handleToggleTodos = async (id: number) => {
     if (loading) return
     
     try {
@@ -120,7 +123,7 @@ function useTodos(loading: boolean, setError: Dispatch<SetStateAction<string | n
     }
   }
 
-  const handleEditTodos = async (id: string, text: string) => {
+  const handleEditTodos = async (id: number, text: string) => {
     if (text.trim() === "" ) return 
     try {
       setLoading(true)

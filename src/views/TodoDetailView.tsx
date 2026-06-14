@@ -4,14 +4,14 @@ import { Link } from "react-router-dom"
 import { AppContext } from "../contexts/AppContext"
 
 type Props = {
-  selectCategoryId: string
+  selectCategoryId: number
   selectedDate: string
   categories: Category[]
   categoryText: string
-  setSelectCategoryId: (id: string) => void
+  setSelectCategoryId: (id: number) => void
   setCategoryText: (text: string) => void
   handleAddCategories: () => void
-  handleEditCategories: (id: string, text: string, choice: "edit" | "keep") => void
+  handleEditCategories: (id: number, text: string, choice: "edit" | "keep") => void
   changeDate: (number: number) => void
 }
 
@@ -22,7 +22,7 @@ function TodoDetailView ({selectedDate, selectCategoryId, categories, categoryTe
     if (!context) throw new Error("AppContext not found")
     const { currentTodos } = context
 
-  const categoryTodo = (categoryId: string) => {
+  const categoryTodo = (categoryId: number) => {
     const category = currentTodos.filter((todo) => todo.categoryId === categoryId) ?? []
     const completed = category.filter((category) => category.status === "completed")
     return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)
