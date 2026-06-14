@@ -17,7 +17,13 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  const stateTodos = useTodos(setError, setLoading)
+  const errorTime = () => {
+    setTimeout(() => {
+      setError(null)
+    }, 5000)
+  }
+
+  const stateTodos = useTodos(setError, setLoading, errorTime)
   const {
     todos,
     today,
@@ -39,9 +45,10 @@ function App() {
     changeDate
   } = stateTodos
 
-  const stateCategories = useCategories(setError)
+  const stateCategories = useCategories(setError, errorTime, setLoading)
   const {
     categories,
+    setCategories,
     handleAddCategories,
     handleEditCategories
   } = stateCategories
@@ -53,7 +60,7 @@ function App() {
     continuousAchievement
   } = stats
 
-  const localStorage = useInitializeApp(todos, categories, selectCategoryId, setError, setLoading, setTodos, selectedDate)
+  const localStorage = useInitializeApp(todos, setCategories, selectCategoryId, setError, setLoading, setTodos, selectedDate, errorTime)
 
   const filteredTodos = currentTodos.filter((todo) => {
     if (filter === "active") return todo.status === "active"

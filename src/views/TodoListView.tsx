@@ -7,12 +7,12 @@ import { AppContext } from "../contexts/AppContext"
 type Props = {
   inputText: string
   searchText: string
-  editingId: (string | null)
+  editingId: (number | null)
   categoriesTodos: Todo[]
   setInputText: (text: string) => void
   setSearchText: (text: string) => void
   setFilter: (filter: Filter) => void
-  setEditingId: (id: string | null) => void
+  setEditingId: (id: number | null) => void
   searchFilter: Todo[]
   handleAddTodos: (text: string) => void
 }

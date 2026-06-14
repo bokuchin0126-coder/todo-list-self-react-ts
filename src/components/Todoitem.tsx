@@ -4,8 +4,8 @@ import { AppContext } from "../contexts/AppContext"
 
 type Props = {
   todo: Todo
-  editingId: (string | null)
-  setEditingId: (id: string | null) => void
+  editingId: (number | null)
+  setEditingId: (id: number | null) => void
 }
 
 function Todoitem({todo, editingId, setEditingId}: Props) {
@@ -17,7 +17,7 @@ function Todoitem({todo, editingId, setEditingId}: Props) {
     const [editText, setEditText] = useState<string>("")
     const containerRef = useRef<HTMLDivElement | null>(null)
 
-    const changeEditingId = (id: string) => {
+    const changeEditingId = (id: number) => {
       if (editingId === id) {
         setEditingId(null)
       } else {

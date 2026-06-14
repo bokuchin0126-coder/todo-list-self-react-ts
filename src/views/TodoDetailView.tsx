@@ -8,9 +8,9 @@ type Props = {
     categories: Category[]
     currentTodos: Todo[]
     selectedDate: string
-    setSelectCategoryId: (id: string) => void
+    setSelectCategoryId: (id: number) => void
     handleAddCategories: (text: string) => void
-    handleEditCategories: (id: string, text: string, choose: "edit" | "keep") => void
+    handleEditCategories: (id: number, text: string, choose: "edit" | "keep") => void
     changeDate: (number: number) => void
 }
 
@@ -24,7 +24,7 @@ function TodoDetailView ({categories, selectedDate, setSelectCategoryId, handleA
     const [inputText, setInputText] = useState<string>("")
     const [editText, setEditText] = useState<string>("")
 
-    const categoryTodo = (categoryId: string) => {
+    const categoryTodo = (categoryId: number) => {
       const category = currentTodos.filter((todo) => todo.categoryId === categoryId)
       const completed = category.filter((category) => category.status === "completed")
       return category.length === 0 ? 0 : Math.floor((completed.length / category.length) * 100)

@@ -3,12 +3,15 @@ import type { Dispatch, SetStateAction } from "react"
 import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 
-function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>) {
+function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void) {
   const [todos, setTodos] = useState<Todo[]>([])
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [selectCategoryId, setSelectCategoryId] = useState<string>("1")
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [selectCategoryId, setSelectCategoryId] = useState<number>(() => {
+    const saved = localStorage.getItem("selectCategoryId")
+    return saved ? Number(saved) : 0
+  })
   const today = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Tokyo",
     year: "numeric",
@@ -72,7 +75,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     }
   }
 
-  const handleToggleTodos = async (id: string) => {
+  const handleToggleTodos = async (id: number) => {
     setLoading(true)
     const todo = todos.find(todo => todo.id === id)
     if (!todo) return 
@@ -100,7 +103,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     }
   }
   
-  const handleEditTodos = async (id: string, text: string) => {
+  const handleEditTodos = async (id: number, text: string) => {
     if (text.trim() === "") return 
     setLoading(true)
 
@@ -127,7 +130,7 @@ function useTodos(setError: Dispatch<SetStateAction<string | null>>, setLoading:
     }
   }
 
-  const handleDeleteTodos = async (id: string) => {
+  const handleDeleteTodos = async (id: number) => {
     const todo = currentTodos.find(todo => todo.id === id)
     if (!todo) return
     setLoading(true)
